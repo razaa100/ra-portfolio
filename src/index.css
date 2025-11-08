@@ -1,0 +1,21 @@
+/* src/index.css */
+@import "tailwindcss";
+
+/* optional small global styles */
+:root {
+  --bg: #0b0b0c;
+  --muted: #9ca3af;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: #e5e7eb;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
