@@ -104,7 +104,7 @@ export default function Portfolio() {
 
             {submitted && (
                 <>
-                    <MainContent />
+                    <MainContent name={name} />
                     <MusicPlayer categories={categories} />
 
                 </>

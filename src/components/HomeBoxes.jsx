@@ -1,3 +1,4 @@
+// HomeBoxes.jsx
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaPaperPlane } from "react-icons/fa";
@@ -13,12 +14,16 @@ export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
     const [typedText, setTypedText] = useState("");
     const [isTyping, setIsTyping] = useState(false);
 
+    // ← NEW: list of special names (case-insensitive)
+    const specialNames = ["bianca", "bia", "kakie"];
+    const isSpecial = specialNames.includes(name.trim().toLowerCase());
+
     useEffect(() => {
         const box = boxes[currentBox];
         const fullText = box?.text ?? "";
         if (!fullText) return;
 
-        setTypedText(""); // reset for new box
+        setTypedText("");
         setIsTyping(true);
 
         let index = 0;
@@ -115,7 +120,9 @@ export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 >
                     <p className="text-gray-300">
-                        Nice to meet you, <b className="text-yellow-400">{name}</b>! This is for you<br />
+                        Nice to meet you, <b className="text-yellow-400">{name}</b>!
+                        {isSpecial && " This is for you"}
+                        <br />
                         <i>(Please scroll down)</i>
                     </p>
                 </motion.div>

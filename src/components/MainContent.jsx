@@ -1,3 +1,4 @@
+// MainContent.jsx
 import React from "react";
 import { motion } from "framer-motion";
 
@@ -27,7 +28,10 @@ import ScikitIcon from "../assets/scikit-learn.png";
 import SAPIcon from "../assets/sap.png";
 import SalesforceIcon from "../assets/Salesforce.png";
 
-export default function MainContent() {
+export default function MainContent({ name = "" }) {   // ← receive name
+    const specialNames = ["bianca", "bia", "kakie"];
+    const isSpecial = specialNames.includes(name.trim().toLowerCase());
+
     return (
         <>
             {/* About Me Section */}
@@ -45,7 +49,8 @@ export default function MainContent() {
                     <div className="flex flex-col md:flex-row-reverse items-center gap-10">
                         <img src={lightning_icons} alt="About Me 2" className="rounded-2xl w-60" />
                         <p className="max-w-xl text-gray-300 leading-relaxed">
-                            I enjoy <span className="text-yellow-400">understanding</span> the things that I am curious about. And lately, that includes you 😊
+                            I enjoy <span className="text-yellow-400">understanding</span> the things that I am curious about.
+                            {isSpecial && " And lately, that includes you 😊"}
                         </p>
                     </div>
 
@@ -58,7 +63,6 @@ export default function MainContent() {
                     </div>
                 </div>
             </section>
-
         </>
     );
 }
