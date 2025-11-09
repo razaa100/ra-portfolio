@@ -168,11 +168,6 @@ export default function MainContent() {
                 </div>
             </section>
 
-            {/* Projects Section */}
-            <section id="projects" className="py-24 px-8 text-center">
-                <h2 className="text-3xl font-semibold mb-6">Projects</h2>
-                <p className="text-gray-400">Coming soon…</p>
-            </section>
         </>
     );
 }

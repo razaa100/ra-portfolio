@@ -1,14 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FaPlay, FaPause } from "react-icons/fa";
 
-export default function MusicPlayer({ songs }) {
+export default function MusicPlayer({ categories }) {
     const [currentSongIndex, setCurrentSongIndex] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const audioRef = useRef(null);
 
+    const allSongs = categories.flatMap(cat => cat.songs);
+
     const handlePlayPause = (index) => {
         if (currentSongIndex === index) {
-            // Toggle play/pause
             if (isPlaying) {
                 audioRef.current.pause();
                 setIsPlaying(false);
@@ -17,42 +18,61 @@ export default function MusicPlayer({ songs }) {
                 setIsPlaying(true);
             }
         } else {
-            // Switch to a new song
             setCurrentSongIndex(index);
             setIsPlaying(true);
-            setTimeout(() => {
-                audioRef.current.play();
-            }, 100); // wait for audioRef.src to update
         }
     };
 
-    return (
-        <section id="music" className="py-24 px-8 text-center">
-            <h2 className="text-3xl font-semibold mb-6">These are the songs that I like</h2>
+    useEffect(() => {
+        if (currentSongIndex !== null && audioRef.current) {
+            audioRef.current.load();
+            audioRef.current.play().catch(err => console.log(err));
+        }
+    }, [currentSongIndex]);
 
-            <div className="flex flex-col items-center space-y-4">
-                {songs.map((song, index) => (
-                    <div
-                        key={index}
-                        className="w-full max-w-md p-4 bg-neutral-800 rounded-2xl flex justify-between items-center shadow-lg"
-                    >
-                        <p className="text-gray-200">{song.name}</p>
-                        <button
-                            onClick={() => handlePlayPause(index)}
-                            className="text-white bg-blue-600 p-2 rounded-full hover:bg-blue-500"
-                        >
-                            {currentSongIndex === index && isPlaying ? <FaPause /> : <FaPlay />}
-                        </button>
+    return (
+        <section id="music" className="py-24 px-8">
+            <div className="flex flex-col md:flex-row gap-8 justify-center">
+                {categories.map((category) => (
+                    <div key={category.title} className="flex-1">
+                        <h2 className="text-3xl font-semibold mb-6 text-center">
+                            {category.title}
+                        </h2>
+                        <div className="flex flex-col gap-4">
+                            {category.songs.map((song) => (
+                                <div
+                                    key={song.globalIndex}
+                                    className="flex items-center justify-between p-4 bg-neutral-800 rounded-2xl shadow-lg"
+                                >
+                                    <p className="text-gray-200">{song.name}</p>
+                                    <button
+                                        onClick={() => handlePlayPause(song.globalIndex)}
+                                        className="text-white bg-blue-600 p-2 rounded-full hover:bg-blue-500"
+                                    >
+                                        {currentSongIndex === song.globalIndex && isPlaying ? (
+                                            <FaPause />
+                                        ) : (
+                                            <FaPlay />
+                                        )}
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 ))}
             </div>
 
+            {/* Audio Player */}
             {currentSongIndex !== null && (
-                <audio
-                    ref={audioRef}
-                    src={songs[currentSongIndex].src}
-                    onEnded={() => setIsPlaying(false)}
-                />
+                <div className="mt-8 flex justify-center">
+                    <audio ref={audioRef} controls>
+                        <source
+                            src={allSongs.find(s => s.globalIndex === currentSongIndex)?.src}
+                            type="audio/mpeg"
+                        />
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
             )}
         </section>
     );
