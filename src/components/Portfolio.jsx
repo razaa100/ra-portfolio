@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { FaPaperPlane } from "react-icons/fa";
 import gibson_sg from "../assets/gibson_sg.png";
 import lightning_icons from "../assets/lightning_icons.png";
 import rock_and_roll from "../assets/rock_and_roll.png";
@@ -16,7 +17,6 @@ import {
     SiPostman
 } from "react-icons/si";
 
-
 import PythonIcon from '../assets/python.png';
 import PandasIcon from '../assets/Pandas.png';
 import ExcelIcon from '../assets/excel.png';
@@ -26,38 +26,63 @@ import ScikitIcon from '../assets/scikit-learn.png';
 import SAPIcon from '../assets/sap.png';
 import SalesforceIcon from '../assets/Salesforce.png';
 
-
-
-
-
 export default function Portfolio() {
+    const [name, setName] = useState("");
+    const [submitted, setSubmitted] = useState(false);
+
     return (
         <div className="min-h-screen bg-neutral-900 text-white font-sans scroll-smooth">
             {/* Home Section */}
             <section
                 id="home"
-                className="flex flex-col justify-center items-center h-screen text-center p-8"
+                className="flex flex-col justify-center h-screen text-left pl-48 pr-16"
             >
-                <h1 className="text-5xl font-bold mb-2">Hi there!</h1>
-                <h2 className="text-2xl text-gray-400 mb-6">Welcome to my world</h2>
-                <div className="bg-neutral-800 p-6 rounded-2xl shadow-lg max-w-2xl">
-                    <p className="text-gray-300 leading-relaxed">
-                        I'm RA
-                    </p>
+                <p className="text-gray-400 text-sm mb-1">Hi there...</p>
+                <h1 className="text-5xl font-bold mb-2">This is my own little spot in the internet</h1>
+                <h2 className="text-2xl text-gray-400 mb-6">Welcome to my world!</h2>
+
+                <div className="space-y-4">
+                    <div className="bg-neutral-800 p-3 rounded-2xl shadow-lg w-fit">
+                        <p className="text-gray-300 leading-relaxed">I'm RA!</p>
+                    </div>
+
+                    <div className="bg-blue-900 p-3 rounded-2xl shadow-lg w-fit">
+                        <p className="text-gray-300 leading-relaxed">Nice to meet you!</p>
+                    </div>
+
+                    {/* Visitor Name Input */}
+                    <div className="bg-neutral-800 p-3 rounded-2xl shadow-lg w-fit flex items-center space-x-2">
+                        <p className="text-gray-300 whitespace-nowrap">What's your name?</p>
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="p-2 rounded-lg bg-neutral-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neutral-500"
+                        />
+                        <button
+                            onClick={() => name.trim() && setSubmitted(true)}
+                            className="p-2 bg-neutral-600 rounded-lg hover:bg-neutral-500 text-white inline-flex items-center justify-center"
+                        >
+                            <FaPaperPlane />
+                        </button>
+                    </div>
+
+                    {/* Greeting Box */}
+                    {submitted && (
+                        <div className="bg-red-800 p-3 rounded-2xl shadow-lg w-fit">
+                            <p className="text-gray-300">Nice to meet you, {name}! This is for you</p>
+                        </div>
+                    )}
                 </div>
             </section>
+
 
             {/* About Me Section */}
             <section id="about" className="py-24">
                 <div className="max-w-5xl mx-auto px-4 space-y-6">
-
                     {/* Part 1 */}
                     <div className="flex flex-col md:flex-row items-center gap-10">
-                        <img
-                            src={gibson_sg}
-                            alt="About Me 1"
-                            className="rounded-2xl w-60"
-                        />
+                        <img src={gibson_sg} alt="About Me 1" className="rounded-2xl w-60" />
                         <p className="max-w-xl text-gray-300 leading-relaxed">
                             I started my journey in tech with a deep curiosity for how things
                             work. Over time, I discovered a passion for coding and
@@ -67,11 +92,7 @@ export default function Portfolio() {
 
                     {/* Part 2 */}
                     <div className="flex flex-col md:flex-row-reverse items-center gap-10">
-                        <img
-                            src={lightning_icons}
-                            alt="About Me 2"
-                            className="rounded-2xl w-60"
-                        />
+                        <img src={lightning_icons} alt="About Me 2" className="rounded-2xl w-60" />
                         <p className="max-w-xl text-gray-300 leading-relaxed">
                             Collaboration and adaptability have been key parts of my growth. I
                             enjoy working with teams that push creative and technical
@@ -81,37 +102,27 @@ export default function Portfolio() {
 
                     {/* Part 3 */}
                     <div className="flex flex-col md:flex-row items-center gap-10">
-                        <img
-                            src={rock_and_roll}
-                            alt="About Me 3"
-                            className="rounded-2xl w-60"
-                        />
+                        <img src={rock_and_roll} alt="About Me 3" className="rounded-2xl w-60" />
                         <p className="max-w-xl text-gray-300 leading-relaxed">
                             Outside of work, I stay inspired by exploring new technologies,
                             writing, and finding elegant ways to merge creativity with logic.
                         </p>
                     </div>
-
                 </div>
             </section>
-
-
 
             {/* Skills Section */}
             <section id="skills" className="py-24 px-4 flex flex-col items-center bg-neutral-900">
                 <h2 className="text-3xl font-semibold mb-12 text-white">Skills</h2>
 
                 <div className="flex justify-center items-end space-x-6">
-
-                    {/* 1st Card - slightly left */}
+                    {/* 1st Card - Web Development */}
                     <motion.div
-                        className="bg-neutral-800 border border-neutral-700 rounded-3xl shadow-2xl w-64 h-96 p-6 rotate-[-5deg] flex flex-col justify-between"
+                        className="bg-orange-900 border border-neutral-700 rounded-3xl shadow-2xl w-64 h-96 p-6 rotate-[-5deg] flex flex-col justify-between"
                         whileHover={{ y: -10 }}
                     >
                         <h3 className="text-xl font-semibold mb-4 text-white">Web Development</h3>
                         <div className="grid grid-cols-3 gap-4 text-center text-gray-300 text-sm">
-
-                            {/* Front End */}
                             <div className="flex flex-col items-center">
                                 <SiHtml5 className="w-8 h-8 mb-1" color="#E34F26" />
                                 <p>HTML</p>
@@ -124,8 +135,6 @@ export default function Portfolio() {
                                 <SiJavascript className="w-8 h-8 mb-1" color="#F7DF1E" />
                                 <p>JS</p>
                             </div>
-
-                            {/* Back End */}
                             <div className="flex flex-col items-center">
                                 <SiNodedotjs className="w-8 h-8 mb-1" color="#339933" />
                                 <p>Node.js</p>
@@ -142,8 +151,6 @@ export default function Portfolio() {
                                 <SiMongodb className="w-8 h-8 mb-1" color="#47A248" />
                                 <p>MongoDB</p>
                             </div>
-
-                            {/* Tools */}
                             <div className="flex flex-col items-center">
                                 <SiGit className="w-8 h-8 mb-1" color="#F05032" />
                                 <p>Git</p>
@@ -156,13 +163,12 @@ export default function Portfolio() {
                                 <SiPostman className="w-8 h-8 mb-1" color="#FF6C37" />
                                 <p>Postman</p>
                             </div>
-
                         </div>
                     </motion.div>
 
-                    {/* 2nd Card - Data Analysis & Machine Learning */}
+                    {/* 2nd Card - Data Analysis */}
                     <motion.div
-                        className="bg-neutral-800 border border-neutral-700 rounded-3xl shadow-2xl w-64 h-96 p-6 flex flex-col justify-between"
+                        className="bg-blue-900 border border-neutral-700 rounded-3xl shadow-2xl w-64 h-96 p-6 flex flex-col justify-between"
                         whileHover={{ y: -10 }}
                     >
                         <h3 className="text-xl font-semibold mb-4 text-white">Data Analysis & Machine Learning</h3>
@@ -196,7 +202,7 @@ export default function Portfolio() {
 
                     {/* 3rd Card - Enterprise Platforms */}
                     <motion.div
-                        className="bg-neutral-800 border border-neutral-700 rounded-3xl shadow-2xl w-64 h-96 p-6 rotate-[5deg] flex flex-col"
+                        className="bg-yellow-800 border border-neutral-700 rounded-3xl shadow-2xl w-64 h-96 p-6 rotate-[5deg] flex flex-col"
                         whileHover={{ y: -10 }}
                     >
                         <h3 className="text-xl font-semibold mb-4 text-white">Enterprise Platforms</h3>
@@ -211,18 +217,8 @@ export default function Portfolio() {
                             </div>
                         </div>
                     </motion.div>
-
                 </div>
             </section>
-
-
-
-
-
-
-
-
-
 
             {/* Projects Section */}
             <section id="projects" className="py-24 px-8 text-center">
