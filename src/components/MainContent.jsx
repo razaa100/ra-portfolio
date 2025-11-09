@@ -41,7 +41,7 @@ export default function MainContent({ name = "" }) {   // ← receive name
                     <div className="flex flex-col md:flex-row items-center gap-10">
                         <img src={gibson_sg} alt="About Me 1" className="rounded-2xl w-60" />
                         <p className="max-w-xl text-gray-300 leading-relaxed">
-                            I love <span className="text-yellow-400">music</span>, <span className="text-yellow-400">technology</span>, and <span className="text-yellow-400">dogs</span>, and whatever else catches my interest. I like creating things, figuring stuff out, and just seeing where my curiousity takes me.
+                            I love <span className="text-yellow-400">music</span>, <span className="text-yellow-400">technology</span>, and <span className="text-yellow-400">dogs</span>, and whatever else catches my interest. I like creating things, figuring stuff out, and just seeing where my curiosity takes me.
                         </p>
                     </div>
 

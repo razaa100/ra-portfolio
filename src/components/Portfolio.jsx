@@ -55,7 +55,6 @@ export default function Portfolio() {
 
     return (
         <div className="min-h-screen bg-neutral-900 text-white font-sans scroll-smooth">
-
             {/* Home Section */}
             <section
                 id="home"
