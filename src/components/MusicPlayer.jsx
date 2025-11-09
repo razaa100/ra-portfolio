@@ -4,11 +4,14 @@ import { FaPlay, FaPause } from "react-icons/fa";
 export default function MusicPlayer({ categories }) {
     const [currentSongIndex, setCurrentSongIndex] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [clickedSongs, setClickedSongs] = useState(new Set()); // track clicked songs
     const audioRef = useRef(null);
 
     const allSongs = categories.flatMap(cat => cat.songs);
 
     const handlePlayPause = (index) => {
+        setClickedSongs(prev => new Set(prev).add(index));
+
         if (currentSongIndex === index) {
             if (isPlaying) {
                 audioRef.current.pause();
@@ -32,17 +35,25 @@ export default function MusicPlayer({ categories }) {
 
     return (
         <section id="music" className="py-24 px-8">
+            {/* Main Header */}
+            <h1 className="text-4xl font-bold mb-12 text-center text-white">
+                These are my favorite Romantic songs...
+            </h1>
+
             <div className="flex flex-col md:flex-row gap-8 justify-center">
                 {categories.map((category) => (
                     <div key={category.title} className="flex-1">
-                        <h2 className="text-3xl font-semibold mb-6 text-center">
+                        <h2 className="text-3xl font-semibold mb-6 text-center text-white">
                             {category.title}
                         </h2>
                         <div className="flex flex-col gap-4">
                             {category.songs.map((song) => (
                                 <div
                                     key={song.globalIndex}
-                                    className="flex items-center justify-between p-4 bg-neutral-800 rounded-2xl shadow-lg"
+                                    className={`flex items-center justify-between p-3 rounded-2xl shadow-lg ${clickedSongs.has(song.globalIndex)
+                                        ? "bg-red-900"
+                                        : "bg-neutral-800"
+                                        }`}
                                 >
                                     <p className="text-gray-200">{song.name}</p>
                                     <button
@@ -62,7 +73,6 @@ export default function MusicPlayer({ categories }) {
                 ))}
             </div>
 
-            {/* Audio Player */}
             {currentSongIndex !== null && (
                 <div className="mt-8 flex justify-center">
                     <audio ref={audioRef} controls>

@@ -3,6 +3,7 @@ import HomeBoxes from "./HomeBoxes";
 import TypewriterHeader from "./TypewriterHeader";
 import MainContent from "./MainContent";
 import MusicPlayer from "./MusicPlayer";
+import Skills from "./Skills";
 
 export default function Portfolio() {
     const [headerDone, setHeaderDone] = useState(false);
@@ -11,62 +12,70 @@ export default function Portfolio() {
 
     // Songs array
     const romanticSongs = [
-        { name: "Fly Me to the Moon - Olivia Ong", src: "/music/FLY ME TO THE MOON - OLIVIA ONG (LYRICS).opus", globalIndex: 0 },
-        { name: "Just The Two Of Us - Bill Withers", src: "/music/Bill Withers  - Just The Two Of Us (Lyrics).opus", globalIndex: 1 },
-        { name: "Can't Take My Eyes Off You - Craymer & Ruthie Craft", src: "/music/Can_t Take My Eyes Off You (Craymer & Ruthie Craft).opus", globalIndex: 2 },
-        { name: "Beanie - Chezile", src: "/music/Chezile - Beanie (Lyrics).opus", globalIndex: 3 },
-        { name: "Coyote Theory - This Side Of Paradise", src: "/music/Coyote theory - This Side Of Paradise (Lyrics).opus", globalIndex: 4 },
-        { name: "I Love You So / Until I Found You - Unknown", src: "/music/I Love You So x Until I Found You.opus", globalIndex: 5 },
-        { name: "Killing Me Softly - Unknown", src: "/music/Killing Me Softly.opus", globalIndex: 6 },
         { name: "L-O-V-E - Nat King Cole", src: "/music/L-O-V-E.opus", globalIndex: 7 },
+        { name: "Blue - yung kai", src: "/music/yung kai - blue (official music video).opus", globalIndex: 11 },
+        { name: "Way Back Into Love - Unknown", src: "/music/Way Back Into Love.opus", globalIndex: 10 },
+        { name: "I Love You So / Until I Found You - Unknown", src: "/music/I Love You So x Until I Found You.opus", globalIndex: 5 },
+        { name: "Fly Me to the Moon - Olivia Ong", src: "/music/FLY ME TO THE MOON - OLIVIA ONG (LYRICS).opus", globalIndex: 0 },
+        { name: "Can't Take My Eyes Off You - Craymer & Ruthie Craft", src: "/music/Can_t Take My Eyes Off You (Craymer & Ruthie Craft).opus", globalIndex: 2 },
         { name: "My Love Mine All Mine - Mitski", src: "/music/Mitski - My Love Mine All Mine (Official Lyric Video).opus", globalIndex: 8 },
         { name: "At My Worst - Pink Sweat$", src: "/music/Pink Sweat$ - At My Worst (Lyrics).opus", globalIndex: 9 },
-        { name: "Way Back Into Love - Unknown", src: "/music/Way Back Into Love.opus", globalIndex: 10 },
-        { name: "Blue - yung kai", src: "/music/yung kai - blue (official music video).opus", globalIndex: 11 }
+        { name: "Killing Me Softly - Unknown", src: "/music/Killing Me Softly.opus", globalIndex: 6 },
+        { name: "Just The Two Of Us - Bill Withers", src: "/music/Bill Withers  - Just The Two Of Us (Lyrics).opus", globalIndex: 1 },
+        { name: "Beanie - Chezile", src: "/music/Chezile - Beanie (Lyrics).opus", globalIndex: 3 },
+        { name: "Coyote Theory - This Side Of Paradise", src: "/music/Coyote theory - This Side Of Paradise (Lyrics).opus", globalIndex: 4 }
     ];
-
 
     const punkSongs = [
-        { name: "Baby - Eslabon Armado", src: "/music/Baby - Eslabon Armado.opus", globalIndex: 12 },
         { name: "Un Día Entenderás - DannyLux", src: "/music/DannyLux - Un Día Entenderás (letra).opus", globalIndex: 13 },
-        { name: "Ella Baila Sola - Eslabon Armado & Peso Pluma", src: "/music/Eslabo Armado, Peso Pluma - Ella Baila Sola.opus", globalIndex: 14 },
         { name: "Mi Historia Entre Tus Dedos - Eslabon Armado", src: "/music/Eslabon Armado - Mi Historia Entre Tus Dedos (Letras_Lyrics).opus", globalIndex: 15 },
-        { name: "Jugaste y Sufrí - Eslabon Armado Ft DannyLux", src: "/music/Jugaste y Sufrí - Eslabon Armado Ft DannyLux (letra).opus", globalIndex: 16 },
-        { name: "1004 KM - Junior H", src: "/music/Junior H - 1004 KM (Letra_Lyrics).opus", globalIndex: 17 },
         { name: "Brindo - Mario Bautista", src: "/music/Mario Bautista - Brindo (Video Oficial).opus", globalIndex: 18 },
+        { name: "Jugaste y Sufrí - Eslabon Armado Ft DannyLux", src: "/music/Jugaste y Sufrí - Eslabon Armado Ft DannyLux (letra).opus", globalIndex: 16 },
+        { name: "Ella Baila Sola - Eslabon Armado & Peso Pluma", src: "/music/Eslabo Armado, Peso Pluma - Ella Baila Sola.opus", globalIndex: 14 },
         { name: "Me Prendes - Eslabon Armado", src: "/music/Me Prendes - Eslabon Armado.opus", globalIndex: 19 },
-        { name: "Solo Me Dejaste - Grupo Marca Registrada", src: "/music/Solo Me Dejaste - Grupo Marca Registrada [Audio Oficial].opus", globalIndex: 20 }
+        { name: "Baby - Eslabon Armado", src: "/music/Baby - Eslabon Armado.opus", globalIndex: 12 },
+        { name: "Solo Me Dejaste - Grupo Marca Registrada", src: "/music/Solo Me Dejaste - Grupo Marca Registrada [Audio Oficial].opus", globalIndex: 20 },
+        { name: "1004 KM - Junior H", src: "/music/Junior H - 1004 KM (Letra_Lyrics).opus", globalIndex: 17 }
     ];
-
 
     const categories = [
-        { title: "These are the corny ones", songs: romanticSongs },
-        { title: "And these are the good ones", songs: punkSongs },
+        { title: "Ito yung mga corny...", songs: romanticSongs },
+        { title: "And these are real ones ;)", songs: punkSongs },
     ];
+
+    // Global Skip function: immediately finish typing and show everything
+    const handleGlobalSkip = () => {
+        setHeaderDone(true);
+        setSubmitted(true);
+    };
 
     return (
         <div className="min-h-screen bg-neutral-900 text-white font-sans scroll-smooth">
             {/* Home Section */}
-            <section
-                id="home"
-                className="flex flex-col justify-center h-screen text-left pl-48 pr-16"
-            >
+            <section id="home" className="flex flex-col justify-center h-screen text-left pl-48 pr-16 relative">
                 <p className="text-gray-400 text-sm mb-1">
-                    <TypewriterHeader text="Hi there..." />
+                    <TypewriterHeader text="Hi there..." onComplete={() => setHeaderDone(true)} />
                 </p>
 
                 <h1 className="text-5xl font-bold mb-2">
-                    <TypewriterHeader
-                        text="This is my own little spot in the internet"
-                        onComplete={() => setHeaderDone(true)}
-                    />
+                    <TypewriterHeader text="This is my own little spot in the internet" onComplete={() => setHeaderDone(true)} />
                 </h1>
 
                 <h2 className="text-2xl text-gray-400 mb-6">
-                    <TypewriterHeader text="Welcome to my world!" />
+                    <TypewriterHeader text="Welcome to my world!" onComplete={() => setHeaderDone(true)} />
                 </h2>
 
-                {/* Show HomeBoxes only after header finishes typing */}
+                {/* Global Skip Button */}
+                {!submitted && (
+                    <button
+                        onClick={handleGlobalSkip}
+                        className="absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500"
+                    >
+                        Skip
+                    </button>
+                )}
+
+                {/* Show HomeBoxes only after header finishes typing or skipped */}
                 {headerDone && (
                     <HomeBoxes
                         name={name}
@@ -80,9 +89,8 @@ export default function Portfolio() {
             {submitted && (
                 <>
                     <MainContent />
-
-                    {/* Music Player Section */}
                     <MusicPlayer categories={categories} />
+                    <Skills />
                 </>
             )}
         </div>
