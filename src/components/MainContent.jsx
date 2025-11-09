@@ -45,7 +45,7 @@ export default function MainContent() {
                     <div className="flex flex-col md:flex-row-reverse items-center gap-10">
                         <img src={lightning_icons} alt="About Me 2" className="rounded-2xl w-60" />
                         <p className="max-w-xl text-gray-300 leading-relaxed">
-                            I enjoy <span className="text-yellow-400">understanding</span> the things that I am curious about. And lately, that includes you.
+                            I enjoy <span className="text-yellow-400">understanding</span> the things that I am curious about. And lately, that includes you 😊
                         </p>
                     </div>
 
