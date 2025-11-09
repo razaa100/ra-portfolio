@@ -55,10 +55,16 @@ export default function Portfolio() {
 
     return (
         <div className="min-h-screen bg-neutral-900 text-white font-sans scroll-smooth">
-            <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500 rounded-full translate-x-1/2 -translate-y-1/2 blur-3xl opacity-80 pointer-events-none"></div>
 
             {/* Home Section */}
-            <section id="home" className="flex flex-col justify-center h-screen text-left pl-48 pr-16 relative">
+            <section
+                id="home"
+                className="
+    flex flex-col justify-center h-screen text-left
+    pl-4 pr-4 sm:pl-12 sm:pr-16 lg:pl-48 lg:pr-16
+    relative
+  "
+            >
                 <p className="text-gray-400 text-sm mb-1" style={{ fontFamily: "'Poppins', sans-serif" }}>
                     <TypewriterHeader text="Hi there..." onComplete={() => setShowLine2(true)} />
                 </p>
@@ -100,7 +106,7 @@ export default function Portfolio() {
                 <>
                     <MainContent />
                     <MusicPlayer categories={categories} />
-                    <Skills />
+
                 </>
             )}
         </div>
