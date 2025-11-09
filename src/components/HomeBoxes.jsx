@@ -5,7 +5,7 @@ import { FaPaperPlane } from "react-icons/fa";
 export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
     const boxes = [
         { id: "b1", text: "I'm RA!", color: "bg-neutral-800", highlight: "RA!" },
-        { id: "b2", text: "Nice to meet you!", color: "bg-blue-900", },
+        { id: "b2", text: "Nice to meet you!", color: "bg-blue-900" },
         { id: "b3", text: "What's your name?", color: "bg-neutral-800", isInput: true },
     ];
 
@@ -67,14 +67,14 @@ export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
             {boxes.slice(0, currentBox + 1).map((box, i) => (
                 <motion.div
                     key={box.id}
-                    className={`${box.color} p-3 rounded-2xl shadow-lg w-fit flex items-center space-x-2`}
+                    className={`${box.color} p-3 rounded-2xl shadow-lg flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full max-w-md`}
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 >
                     {box.isInput ? (
                         <>
-                            <p className="text-gray-300 whitespace-nowrap">
+                            <p className="text-gray-300">
                                 {i === currentBox
                                     ? renderHighlightedText(typedText, box.highlight)
                                     : renderHighlightedText(box.text, box.highlight)}
@@ -84,7 +84,7 @@ export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 placeholder="Your name"
-                                className="p-2 rounded-lg bg-neutral-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neutral-500"
+                                className="p-2 rounded-lg bg-neutral-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neutral-500 w-full sm:w-auto"
                             />
                         </>
                     ) : (
@@ -115,7 +115,7 @@ export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 >
                     <p className="text-gray-300">
-                        Nice to meet you, <b className="text-yellow-400">{name}</b>! This is for you<br></br>
+                        Nice to meet you, <b className="text-yellow-400">{name}</b>! This is for you<br />
                         <i>(Please scroll down)</i>
                     </p>
                 </motion.div>
