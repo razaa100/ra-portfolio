@@ -5,6 +5,7 @@ import tailwind from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [
     react(),
-    tailwind(), // enable Tailwind v4 Vite plugin
+    tailwind() // enable Tailwind v4 Vite plugin
   ],
+  base: '/ra-portfolio/' // <-- top-level, NOT inside plugins
 });
