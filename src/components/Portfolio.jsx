@@ -42,7 +42,7 @@ export default function Portfolio() {
 
     const categories = [
         { title: "Ito yung mga corny...", songs: romanticSongs },
-        { title: "And these are real ones ;)", songs: punkSongs },
+        { title: "Ito yung mga not so corny", songs: punkSongs },
     ];
 
     // Skip function
