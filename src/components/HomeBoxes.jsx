@@ -92,13 +92,14 @@ export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
 
             {submitted && (
                 <motion.div
-                    className="bg-red-800 p-3 rounded-2xl shadow-lg w-fit"
+                    className="bg-blue-900 p-3 rounded-2xl shadow-lg w-fit"
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 >
                     <p className="text-gray-300">
-                        Nice to meet you, {name}! This is for you
+                        Nice to meet you, <b>{name}</b>! This is for you<br></br>
+                        <i>(Please scroll down)</i>
                     </p>
                 </motion.div>
             )}

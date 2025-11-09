@@ -3,11 +3,18 @@ import { FaPaperPlane } from "react-icons/fa";
 import HomeBoxes from "./HomeBoxes";
 import TypewriterHeader from "./TypewriterHeader";
 import MainContent from "./MainContent";
+import MusicPlayer from "./MusicPlayer";
 
 export default function Portfolio() {
     const [headerDone, setHeaderDone] = useState(false);
     const [name, setName] = useState("");
     const [submitted, setSubmitted] = useState(false);
+
+    // Songs array must be declared outside of JSX
+    const songs = [
+        { name: "Fly Me to the Moon - Olivia Ong", src: "/music/FLY ME TO THE MOON - OLIVIA ONG (LYRICS).opus" },
+        { name: "Song 2", src: "/music/song2.mp3" },
+    ];
 
     return (
         <div className="min-h-screen bg-neutral-900 text-white font-sans scroll-smooth">
@@ -31,7 +38,7 @@ export default function Portfolio() {
                     <TypewriterHeader text="Welcome to my world!" />
                 </h2>
 
-                {/* Show HomeBoxes only after the header finishes typing */}
+                {/* Show HomeBoxes only after header finishes typing */}
                 {headerDone && (
                     <HomeBoxes
                         name={name}
@@ -42,8 +49,13 @@ export default function Portfolio() {
                 )}
             </section>
 
-            {/* Show MainContent (About, Skills, Projects) only after name is submitted */}
-            {submitted && <MainContent />}
+            {submitted && (
+                <>
+                    <MainContent />
+                    {/* Music Player Section */}
+                    <MusicPlayer songs={songs} />
+                </>
+            )}
         </div>
     );
 }
