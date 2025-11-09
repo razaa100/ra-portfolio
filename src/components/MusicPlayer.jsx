@@ -26,6 +26,14 @@ export default function MusicPlayer({ categories }) {
         }
     };
 
+    // Autoplay next song when one ends
+    const handleEnded = () => {
+        const currentIndex = allSongs.findIndex(s => s.globalIndex === currentSongIndex);
+        const nextIndex = (currentIndex + 1) % allSongs.length;
+        setCurrentSongIndex(allSongs[nextIndex].globalIndex);
+        setIsPlaying(true);
+    };
+
     useEffect(() => {
         if (currentSongIndex !== null && audioRef.current) {
             audioRef.current.load();
@@ -36,14 +44,14 @@ export default function MusicPlayer({ categories }) {
     return (
         <section id="music" className="py-24 px-8">
             {/* Main Header */}
-            <h1 className="text-4xl font-bold mb-12 text-center text-white">
-                These are my favorite Romantic songs...
+            <h1 className="text-4xl font-bold mb-12 text-center text-white font-['Poppins']">
+                These are my favorite <span className="text-red-400">Romantic </span> songs...
             </h1>
 
             <div className="flex flex-col md:flex-row gap-8 justify-center">
                 {categories.map((category) => (
                     <div key={category.title} className="flex-1">
-                        <h2 className="text-3xl font-semibold mb-6 text-center text-white">
+                        <h2 className="text-3xl font-semibold mb-6 text-center text-white font-['Poppins']">
                             {category.title}
                         </h2>
                         <div className="flex flex-col gap-4">
@@ -55,7 +63,7 @@ export default function MusicPlayer({ categories }) {
                                         : "bg-neutral-800"
                                         }`}
                                 >
-                                    <p className="text-gray-200">{song.name}</p>
+                                    <p className="text-gray-200 font-['Raleway']">{song.name}</p>
                                     <button
                                         onClick={() => handlePlayPause(song.globalIndex)}
                                         className="text-white bg-blue-600 p-2 rounded-full hover:bg-blue-500"
@@ -75,7 +83,7 @@ export default function MusicPlayer({ categories }) {
 
             {currentSongIndex !== null && (
                 <div className="mt-8 flex justify-center">
-                    <audio ref={audioRef} controls>
+                    <audio ref={audioRef} controls onEnded={handleEnded}>
                         <source
                             src={allSongs.find(s => s.globalIndex === currentSongIndex)?.src}
                             type="audio/mpeg"

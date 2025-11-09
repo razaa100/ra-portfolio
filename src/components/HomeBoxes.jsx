@@ -4,8 +4,8 @@ import { FaPaperPlane } from "react-icons/fa";
 
 export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
     const boxes = [
-        { id: "b1", text: "I'm RA!", color: "bg-neutral-800" },
-        { id: "b2", text: "Nice to meet you!", color: "bg-blue-900" },
+        { id: "b1", text: "I'm RA!", color: "bg-neutral-800", highlight: "RA!" },
+        { id: "b2", text: "Nice to meet you!", color: "bg-blue-900", },
         { id: "b3", text: "What's your name?", color: "bg-neutral-800", isInput: true },
     ];
 
@@ -42,11 +42,24 @@ export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
         const box = boxes[currentBox];
         if (box.isInput) {
             if (name.trim()) {
-                setSubmitted(true); // <-- use the lifted state from props
+                setSubmitted(true);
             }
         } else {
             setCurrentBox((prev) => prev + 1);
         }
+    };
+
+    const renderHighlightedText = (text, highlight) => {
+        if (!highlight) return text;
+        const regex = new RegExp(`(${highlight})`, "gi");
+        const parts = text.split(regex);
+        return parts.map((part, i) =>
+            part.toLowerCase() === highlight.toLowerCase() ? (
+                <span key={i} className="text-yellow-400">{part}</span>
+            ) : (
+                <span key={i}>{part}</span>
+            )
+        );
     };
 
     return (
@@ -62,7 +75,9 @@ export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
                     {box.isInput ? (
                         <>
                             <p className="text-gray-300 whitespace-nowrap">
-                                {i === currentBox ? typedText : box.text}
+                                {i === currentBox
+                                    ? renderHighlightedText(typedText, box.highlight)
+                                    : renderHighlightedText(box.text, box.highlight)}
                             </p>
                             <input
                                 type="text"
@@ -74,7 +89,9 @@ export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
                         </>
                     ) : (
                         <p className="text-gray-300 leading-relaxed">
-                            {i === currentBox ? typedText : box.text}
+                            {i === currentBox
+                                ? renderHighlightedText(typedText, box.highlight)
+                                : renderHighlightedText(box.text, box.highlight)}
                         </p>
                     )}
                 </motion.div>
@@ -98,7 +115,7 @@ export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 >
                     <p className="text-gray-300">
-                        Nice to meet you, <b>{name}</b>! This is for you<br></br>
+                        Nice to meet you, <b className="text-yellow-400">{name}</b>! This is for you<br></br>
                         <i>(Please scroll down)</i>
                     </p>
                 </motion.div>

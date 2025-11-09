@@ -6,6 +6,8 @@ import MusicPlayer from "./MusicPlayer";
 import Skills from "./Skills";
 
 export default function Portfolio() {
+    const [showLine2, setShowLine2] = useState(false);
+    const [showLine3, setShowLine3] = useState(false);
     const [headerDone, setHeaderDone] = useState(false);
     const [name, setName] = useState("");
     const [submitted, setSubmitted] = useState(false);
@@ -43,27 +45,35 @@ export default function Portfolio() {
         { title: "And these are real ones ;)", songs: punkSongs },
     ];
 
-    // Global Skip function: immediately finish typing and show everything
+    // Skip function
     const handleGlobalSkip = () => {
+        setShowLine2(true);
+        setShowLine3(true);
         setHeaderDone(true);
         setSubmitted(true);
     };
 
     return (
         <div className="min-h-screen bg-neutral-900 text-white font-sans scroll-smooth">
+            <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500 rounded-full translate-x-1/2 -translate-y-1/2 blur-3xl opacity-80 pointer-events-none"></div>
+
             {/* Home Section */}
             <section id="home" className="flex flex-col justify-center h-screen text-left pl-48 pr-16 relative">
-                <p className="text-gray-400 text-sm mb-1">
-                    <TypewriterHeader text="Hi there..." onComplete={() => setHeaderDone(true)} />
+                <p className="text-gray-400 text-sm mb-1" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                    <TypewriterHeader text="Hi there..." onComplete={() => setShowLine2(true)} />
                 </p>
 
-                <h1 className="text-5xl font-bold mb-2">
-                    <TypewriterHeader text="This is my own little spot in the internet" onComplete={() => setHeaderDone(true)} />
-                </h1>
+                {showLine2 && (
+                    <h1 className="text-5xl font-bold mb-2 font-raleway">
+                        <TypewriterHeader text="This is my own little spot in the internet" onComplete={() => setShowLine3(true)} />
+                    </h1>
+                )}
 
-                <h2 className="text-2xl text-gray-400 mb-6">
-                    <TypewriterHeader text="Welcome to my world!" onComplete={() => setHeaderDone(true)} />
-                </h2>
+                {showLine3 && (
+                    <h2 className="text-2xl text-gray-400 mb-6 font-poppins" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                        <TypewriterHeader text="Welcome to my world!" onComplete={() => setHeaderDone(true)} />
+                    </h2>
+                )}
 
                 {/* Global Skip Button */}
                 {!submitted && (
