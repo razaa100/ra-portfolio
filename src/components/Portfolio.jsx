@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaPaperPlane } from "react-icons/fa";
+import HomeBoxes from "./HomeBoxes";
+import TypewriterHeader from "./TypewriterHeader";
+
 import gibson_sg from "../assets/gibson_sg.png";
 import lightning_icons from "../assets/lightning_icons.png";
 import rock_and_roll from "../assets/rock_and_roll.png";
@@ -29,6 +32,7 @@ import SalesforceIcon from '../assets/Salesforce.png';
 export default function Portfolio() {
     const [name, setName] = useState("");
     const [submitted, setSubmitted] = useState(false);
+    const [headerDone, setHeaderDone] = React.useState(false);
 
     return (
         <div className="min-h-screen bg-neutral-900 text-white font-sans scroll-smooth">
@@ -37,43 +41,23 @@ export default function Portfolio() {
                 id="home"
                 className="flex flex-col justify-center h-screen text-left pl-48 pr-16"
             >
-                <p className="text-gray-400 text-sm mb-1">Hi there...</p>
-                <h1 className="text-5xl font-bold mb-2">This is my own little spot in the internet</h1>
-                <h2 className="text-2xl text-gray-400 mb-6">Welcome to my world!</h2>
+                <p className="text-gray-400 text-sm mb-1">
+                    <TypewriterHeader text="Hi there..." />
+                </p>
 
-                <div className="space-y-4">
-                    <div className="bg-neutral-800 p-3 rounded-2xl shadow-lg w-fit">
-                        <p className="text-gray-300 leading-relaxed">I'm RA!</p>
-                    </div>
+                <h1 className="text-5xl font-bold mb-2">
+                    <TypewriterHeader
+                        text="This is my own little spot in the internet"
+                        onComplete={() => setHeaderDone(true)} // mark header as done
+                    />
+                </h1>
 
-                    <div className="bg-blue-900 p-3 rounded-2xl shadow-lg w-fit">
-                        <p className="text-gray-300 leading-relaxed">Nice to meet you!</p>
-                    </div>
+                <h2 className="text-2xl text-gray-400 mb-6">
+                    <TypewriterHeader text="Welcome to my world!" />
+                </h2>
 
-                    {/* Visitor Name Input */}
-                    <div className="bg-neutral-800 p-3 rounded-2xl shadow-lg w-fit flex items-center space-x-2">
-                        <p className="text-gray-300 whitespace-nowrap">What's your name?</p>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="p-2 rounded-lg bg-neutral-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neutral-500"
-                        />
-                        <button
-                            onClick={() => name.trim() && setSubmitted(true)}
-                            className="p-2 bg-neutral-600 rounded-lg hover:bg-neutral-500 text-white inline-flex items-center justify-center"
-                        >
-                            <FaPaperPlane />
-                        </button>
-                    </div>
-
-                    {/* Greeting Box */}
-                    {submitted && (
-                        <div className="bg-red-800 p-3 rounded-2xl shadow-lg w-fit">
-                            <p className="text-gray-300">Nice to meet you, {name}! This is for you</p>
-                        </div>
-                    )}
-                </div>
+                {/* Only show HomeBoxes after header is done */}
+                {headerDone && <HomeBoxes />}
             </section>
 
 
