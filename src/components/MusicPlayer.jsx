@@ -45,7 +45,7 @@ export default function MusicPlayer({ categories }) {
         <section id="music" className="py-24 px-8">
             {/* Main Header */}
             <h1 className="text-4xl font-bold mb-12 text-center text-white font-['Poppins']">
-                These are my favorite <span className="text-red-400">Romantic </span> songs...
+                These are the <span className="text-yellow-400">songs </span> that I listen to...
             </h1>
 
             <div className="flex flex-col md:flex-row gap-8 justify-center">

@@ -1,5 +1,7 @@
+// src/Portfolio.jsx
 import React, { useState } from "react";
 import HomeBoxes from "./HomeBoxes";
+import { Particles } from "./Particles";   // correct path
 import TypewriterHeader from "./TypewriterHeader";
 import MainContent from "./MainContent";
 import MusicPlayer from "./MusicPlayer";
@@ -12,7 +14,7 @@ export default function Portfolio() {
     const [name, setName] = useState("");
     const [submitted, setSubmitted] = useState(false);
 
-    // Songs array
+    // ────── SONGS ──────
     const romanticSongs = [
         { name: "L-O-V-E - Nat King Cole", src: "./music/L-O-V-E.opus", globalIndex: 7 },
         { name: "Blue - yung kai", src: "./music/yung kai - blue (official music video).opus", globalIndex: 11 },
@@ -45,7 +47,6 @@ export default function Portfolio() {
         { title: "Ito yung mga not so corny", songs: punkSongs },
     ];
 
-    // Skip function
     const handleGlobalSkip = () => {
         setShowLine2(true);
         setShowLine3(true);
@@ -54,15 +55,27 @@ export default function Portfolio() {
     };
 
     return (
-        <div className="min-h-screen bg-neutral-900 text-white font-sans scroll-smooth">
-            {/* Home Section */}
+        /* DARK ROOT + OVERFLOW HIDDEN */
+        <div className="min-h-screen text-white font-sans scroll-smooth relative overflow-hidden">
+
+            {/* PARTICLES – exact shadcn behavior */}
+            <Particles
+                className="fixed inset-0 -z-10"
+                quantity={100}
+                staticity={50}
+                ease={50}
+                size={0.4}
+                color="#ffffff"
+                vx={0}
+                vy={0}
+            />
+
+            {/* HOME */}
             <section
                 id="home"
-                className="
-    flex flex-col justify-center h-screen text-left
-    pl-4 pr-4 sm:pl-12 sm:pr-16 lg:pl-48 lg:pr-16
-    relative
-  "
+                className="flex flex-col justify-center h-screen text-left
+                   pl-4 pr-4 sm:pl-12 sm:pr-16 lg:pl-48 lg:pr-16
+                   relative z-10"
             >
                 <p className="text-gray-400 text-sm mb-1" style={{ fontFamily: "'Poppins', sans-serif" }}>
                     <TypewriterHeader text="Hi there..." onComplete={() => setShowLine2(true)} />
@@ -80,7 +93,6 @@ export default function Portfolio() {
                     </h2>
                 )}
 
-                {/* Global Skip Button */}
                 {!submitted && (
                     <button
                         onClick={handleGlobalSkip}
@@ -90,7 +102,6 @@ export default function Portfolio() {
                     </button>
                 )}
 
-                {/* Show HomeBoxes only after header finishes typing or skipped */}
                 {headerDone && (
                     <HomeBoxes
                         name={name}
@@ -101,11 +112,12 @@ export default function Portfolio() {
                 )}
             </section>
 
+            {/* OTHER SECTIONS */}
             {submitted && (
                 <>
-                    <MainContent name={name} />
-                    <MusicPlayer categories={categories} />
-
+                    <section className="relative z-10"><MainContent name={name} /></section>
+                    <section className="relative z-10"><MusicPlayer categories={categories} /></section>
+                    {/* <section className="relative z-10"><Skills /></section> */}
                 </>
             )}
         </div>
