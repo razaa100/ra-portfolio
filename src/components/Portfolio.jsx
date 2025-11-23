@@ -73,7 +73,7 @@ export default function Portfolio() {
             {/* HOME */}
             <section
                 id="home"
-                className="flex flex-col justify-center h-screen text-left
+                className="flex flex-col justify-center min-h-screen text-left
                    pl-4 pr-4 sm:pl-12 sm:pr-16 lg:pl-48 lg:pr-16
                    relative z-10"
             >
