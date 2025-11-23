@@ -18,7 +18,7 @@ export const Particles = ({
     const circles = useRef([]);
     const mouse = useRef({ x: 0, y: 0 });
     const canvasSize = useRef({ w: 0, h: 0 });
-    const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1;
+    const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
     // ---------- MOUSE ----------
@@ -37,25 +37,50 @@ export const Particles = ({
     };
     const rgb = hexToRgb(color);
 
-    // ---------- RESIZE ----------
+    // ---------- RESIZE (MOBILE-PROOF) ----------
     const resize = () => {
         if (!containerRef.current || !canvasRef.current) return;
+
+        // Critical: Use visualViewport on mobile (survives keyboard/resize)
+        const width = window.visualViewport?.width || window.innerWidth;
+        const height = window.visualViewport?.height || window.innerHeight;
+
+        canvasSize.current.w = width;
+        canvasSize.current.h = height;
+
+        canvasRef.current.width = width * dpr;
+        canvasRef.current.height = height * dpr;
+        canvasRef.current.style.width = `${width}px`;
+        canvasRef.current.style.height = `${height}px`;
+
+        if (ctxRef.current) {
+            ctxRef.current.setTransform(1, 0, 0, 1, 0, 0);
+            ctxRef.current.scale(dpr, dpr);
+        }
+
+        // Force re-create all particles so nothing disappears
         circles.current = [];
-        canvasSize.current.w = containerRef.current.offsetWidth;
-        canvasSize.current.h = containerRef.current.offsetHeight;
-        canvasRef.current.width = canvasSize.current.w * dpr;
-        canvasRef.current.height = canvasSize.current.h * dpr;
-        canvasRef.current.style.width = `${canvasSize.current.w}px`;
-        canvasRef.current.style.height = `${canvasSize.current.h}px`;
-        if (ctxRef.current) ctxRef.current.scale(dpr, dpr);
+        initParticles();
     };
 
     // ---------- INIT ----------
     useEffect(() => {
         if (canvasRef.current) ctxRef.current = canvasRef.current.getContext("2d");
         resize();
+
+        // Standard resize
         window.addEventListener("resize", resize);
-        return () => window.removeEventListener("resize", resize);
+
+        // Mobile-specific: visual viewport changes (keyboard, rotation, etc.)
+        const handleViewport = () => resize();
+        window.visualViewport?.addEventListener("resize", handleViewport);
+        window.visualViewport?.addEventListener("scroll", handleViewport);
+
+        return () => {
+            window.removeEventListener("resize", resize);
+            window.visualViewport?.removeEventListener("resize", handleViewport);
+            window.visualViewport?.removeEventListener("scroll", handleViewport);
+        };
     }, [color]);
 
     useEffect(() => {
@@ -78,25 +103,14 @@ export const Particles = ({
 
     // ---------- CIRCLE FACTORY ----------
     const createCircle = () => {
-        const x = Math.floor(Math.random() * canvasSize.current.w);
-        const y = Math.floor(Math.random() * canvasSize.current.h);
-        const pSize = Math.floor(Math.random() * 2) + size;
-        const targetAlpha = parseFloat((Math.random() * 0.6 + 0.1).toFixed(1));
+        const x = Math.random() * canvasSize.current.w;
+        const y = Math.random() * canvasSize.current.h;
+        const pSize = Math.random() * 2 + size;
+        const targetAlpha = parseFloat((Math.random() * 0.6 + 0.1).toFixed(2));
         const dx = (Math.random() - 0.5) * 0.1;
         const dy = (Math.random() - 0.5) * 0.1;
         const magnetism = 0.1 + Math.random() * 4;
-        return {
-            x,
-            y,
-            translateX: 0,
-            translateY: 0,
-            size: pSize,
-            alpha: 0,
-            targetAlpha,
-            dx,
-            dy,
-            magnetism,
-        };
+        return { x, y, translateX: 0, translateY: 0, size: pSize, alpha: 0, targetAlpha, dx, dy, magnetism };
     };
 
     // ---------- DRAW ----------
@@ -113,13 +127,16 @@ export const Particles = ({
     };
 
     const clear = () => {
-        if (ctxRef.current)
+        if (ctxRef.current) {
             ctxRef.current.clearRect(0, 0, canvasSize.current.w, canvasSize.current.h);
+        }
     };
 
     const initParticles = () => {
         clear();
-        for (let i = 0; i < quantity; i++) drawCircle(createCircle());
+        for (let i = 0; i < quantity; i++) {
+            drawCircle(createCircle());
+        }
     };
 
     // ---------- ANIMATION ----------
@@ -128,40 +145,27 @@ export const Particles = ({
         const animate = () => {
             clear();
             circles.current.forEach((c, i) => {
-                // edge fade
                 const edge = [
                     c.x + c.translateX - c.size,
-                    canvasSize.current.w - c.x - c.translateX - c.size,
+                    canvasSize.current.w - (c.x + c.translateX + c.size),
                     c.y + c.translateY - c.size,
-                    canvasSize.current.h - c.y - c.translateY - c.size,
+                    canvasSize.current.h - (c.y + c.translateY + c.size),
                 ];
-                const closest = edge.reduce((a, b) => Math.min(a, b));
+                const closest = Math.max(0, edge.reduce((a, b) => Math.min(a, b), Infinity));
                 const remap = closest < 20 ? closest / 20 : 1;
-                c.alpha += remap > 1 ? 0.02 : 0;
-                if (c.alpha > c.targetAlpha) c.alpha = c.targetAlpha;
-                else c.alpha = c.targetAlpha * remap;
+                c.alpha += c.alpha > c.targetAlpha ? -0.02 : 0.02;
+                c.alpha = Math.min(c.alpha, c.targetAlpha * remap);
 
-                // drift + base velocity
                 c.x += c.dx + vx;
                 c.y += c.dy + vy;
 
-                // mouse pull
-                c.translateX +=
-                    (mouse.current.x / (staticity / c.magnetism) - c.translateX) / ease;
-                c.translateY +=
-                    (mouse.current.y / (staticity / c.magnetism) - c.translateY) / ease;
+                c.translateX += (mouse.current.x / (staticity / c.magnetism) - c.translateX) / ease;
+                c.translateY += (mouse.current.y / (staticity / c.magnetism) - c.translateY) / ease;
 
                 drawCircle(c, true);
 
-                // respawn
-                if (
-                    c.x < -c.size ||
-                    c.x > canvasSize.current.w + c.size ||
-                    c.y < -c.size ||
-                    c.y > canvasSize.current.h + c.size
-                ) {
-                    circles.current.splice(i, 1);
-                    drawCircle(createCircle());
+                if (c.x < -c.size || c.x > canvasSize.current.w + c.size || c.y < -c.size || c.y > canvasSize.current.h + c.size) {
+                    circles.current[i] = createCircle();
                 }
             });
             requestAnimationFrame(animate);
@@ -173,7 +177,8 @@ export const Particles = ({
     return (
         <div
             ref={containerRef}
-            className={`pointer-events-none ${className}`}
+            className={`pointer-events-none fixed inset-0 -z-10 ${className}`}
+            style={{ transform: "translateZ(0)" }} // Force GPU
             aria-hidden="true"
         >
             <canvas ref={canvasRef} className="size-full" />
