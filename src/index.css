@@ -42,3 +42,32 @@ p {
       drop-shadow(0 0 8px #ccff00) drop-shadow(0 0 20px #ccff00) drop-shadow(0 0 40px #ccff00);
   }
 }
+
+
+/* Custom Neon Scrollbar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(168, 85, 247, 0.5);
+  /* purple-500/50 */
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.scrollbar-thin:hover::-webkit-scrollbar-thumb {
+  background: rgba(168, 85, 247, 0.7);
+  /* purple-400/70 */
+}

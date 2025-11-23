@@ -7,6 +7,8 @@ import MainContent from "./MainContent";
 import MusicPlayer from "./MusicPlayer";
 import SongOfTheDayButton from "./SongOfTheDayButton";
 import GlobalMusicBar from "./GlobalMusicBar";
+import { motion } from "framer-motion";
+import { FaPaperPlane } from "react-icons/fa";
 
 export default function Portfolio() {
     const [showLine2, setShowLine2] = useState(false);
@@ -14,181 +16,305 @@ export default function Portfolio() {
     const [headerDone, setHeaderDone] = useState(false);
     const [name, setName] = useState("");
     const [submitted, setSubmitted] = useState(false);
+    const [introPhase, setIntroPhase] = useState("greeting");
 
-    // Global Music State
     const [currentSong, setCurrentSong] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [playedSongs, setPlayedSongs] = useState(new Set());
     const audioRef = useRef(null);
 
-    // Sync audio source and play/pause
-    useEffect(() => {
-        if (!audioRef.current || !currentSong) return;
+    // ──────────────────────────────────────────────────────────────
+    // ALL PLAYLISTS & SONGS
+    // ──────────────────────────────────────────────────────────────
+    const romanticSongs = [
+        { name: "L-O-V-E - Nat King Cole", src: "./music/L-O-V-E.opus" },
+        { name: "Blue - yung kai", src: "./music/yung kai - blue (official music video).opus" },
+        { name: "Way Back Into Love - Unknown", src: "./music/Way Back Into Love.opus" },
+        { name: "I Love You So / Until I Found You - Unknown", src: "./music/I Love You So x Until I Found You.opus" },
+        { name: "Fly Me to the Moon - Olivia Ong", src: "./music/FLY ME TO THE MOON - OLIVIA ONG (LYRICS).opus" },
+        { name: "Can't Take My Eyes Off You - Craymer & Ruthie Craft", src: "./music/Can_t Take My Eyes Off You (Craymer & Ruthie Craft).opus" },
+        { name: "My Love Mine All Mine - Mitski", src: "./music/Mitski - My Love Mine All Mine (Official Lyric Video).opus" },
+        { name: "At My Worst - Pink Sweat$", src: "./music/Pink Sweat$ - At My Worst (Lyrics).opus" },
+        { name: "Killing Me Softly - Unknown", src: "./music/Killing Me Softly.opus" },
+        { name: "Just The Two Of Us - Bill Withers", src: "./music/Bill Withers  - Just The Two Of Us (Lyrics).opus" },
+        { name: "Beanie - Chezile", src: "./music/Chezile - Beanie (Lyrics).opus" },
+        { name: "This Side Of Paradise - Coyote Theory", src: "./music/Coyote theory - This Side Of Paradise (Lyrics).opus" }
+    ];
 
-        audioRef.current.src = currentSong.src;
-        audioRef.current.load();
+    const punkSongs = [
+        { name: "La Víctima - Xavi", src: "./music/Xavi - La Víctima.opus" },
+        { name: "La Diabla - Xavi", src: "./music/Xavi - La Diabla.opus" },
+        { name: "¿Dime Porque", src: "./music/¿Dime Porque_.opus" },
+        { name: "Ando Más Que Mal", src: "./music/Ando Más Que Mal.opus" },
+        { name: "Un Día Entenderás - DannyLux", src: "./music/DannyLux - Un Día Entenderás (letra).opus" },
+        { name: "Mi Historia Entre Tus Dedos - Eslabon Armado", src: "./music/Eslabon Armado - Mi Historia Entre Tus Dedos (Letras_Lyrics).opus" },
+        { name: "Brindo - Mario Bautista", src: "./music/Mario Bautista - Brindo (Video Oficial).opus" },
+        { name: "Jugaste y Sufrí - Eslabon Armado Ft DannyLux", src: "./music/Jugaste y Sufrí - Eslabon Armado Ft DannyLux (letra).opus" },
+        { name: "Ella Baila Sola - Eslabon Armado & Peso Pluma", src: "./music/Eslabo Armado, Peso Pluma - Ella Baila Sola.opus" },
+        { name: "Me Prendes - Eslabon Armado", src: "./music/Me Prendes - Eslabon Armado.opus" },
+        { name: "Baby - Eslabon Armado", src: "./music/Baby - Eslabon Armado.opus" },
+        { name: "Solo Me Dejaste - Grupo Marca Registrada", src: "./music/Solo Me Dejaste - Grupo Marca Registrada [Audio Oficial].opus" },
+        { name: "1004 KM - Junior H", src: "./music/Junior H - 1004 KM (Letra_Lyrics).opus" }
 
-        if (isPlaying) {
-            audioRef.current.play().catch(() => setIsPlaying(false));
-        } else {
-            audioRef.current.pause();
-        }
-    }, [currentSong]);
+    ];
 
-    // Sync global isPlaying state with actual audio events
-    useEffect(() => {
-        const audio = audioRef.current;
-        if (!audio) return;
+    const categories = [
+        { title: "Corny af", songs: romanticSongs },
+        { title: "Modern Corridos", songs: punkSongs },
+    ];
 
-        const handlePlay = () => setIsPlaying(true);
-        const handlePause = () => setIsPlaying(false);
-        const handleEnded = () => {
-            setIsPlaying(false);
-            // Optional: auto-next or loop
-        };
+    // Song of the Day data
+    const songs = [
+        "./music/L-O-V-E.opus",
+        "./music/yung kai - blue (official music video).opus",
+        "./music/Way Back Into Love.opus",
+        "./music/I Love You So x Until I Found You.opus",
+        "./music/FLY ME TO THE MOON - OLIVIA ONG (LYRICS).opus",
+        "./music/Can_t Take My Eyes Off You (Craymer & Ruthie Craft).opus",
+        "./music/Mitski - My Love Mine All Mine (Official Lyric Video).opus",
+        "./music/Pink Sweat$ - At My Worst (Lyrics).opus",
+        "./music/Killing Me Softly.opus",
+        "./music/Bill Withers  - Just The Two Of Us (Lyrics).opus",
+        "./music/Chezile - Beanie (Lyrics).opus",
+        "./music/Coyote theory - This Side Of Paradise (Lyrics).opus",
+        "./music/DannyLux - Un Día Entenderás (letra).opus",
+        "./music/Eslabo Armado, Peso Pluma - Ella Baila Sola.opus",
+    ];
 
-        audio.addEventListener("play", handlePlay);
-        audio.addEventListener("pause", handlePause);
-        audio.addEventListener("ended", handleEnded);
+    const songNames = [
+        "L-O-V-E - Nat King Cole",
+        "Blue - yung kai",
+        "Way Back Into Love",
+        "I Love You So / Until I Found You",
+        "Fly Me to the Moon - Olivia Ong",
+        "Can't Take My Eyes Off You",
+        "My Love Mine All Mine - Mitski",
+        "At My Worst - Pink Sweat$",
+        "Killing Me Softly",
+        "Just The Two Of Us - Bill Withers",
+        "Beanie - Chezile",
+        "This Side Of Paradise - Coyote Theory",
+        "Un Día Entenderás - DannyLux",
+        "Ella Baila Sola - Eslabon Armado & Peso Pluma",
+    ];
 
-        return () => {
-            audio.removeEventListener("play", handlePlay);
-            audio.removeEventListener("pause", handlePause);
-            audio.removeEventListener("ended", handleEnded);
-        };
-    }, [currentSong]);
+    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+    const sotdIndex = dayOfYear % songs.length;
 
-    const handleGlobalPlayPause = () => {
-        if (!audioRef.current) return;
-        if (isPlaying) {
-            audioRef.current.pause();
-        } else {
-            audioRef.current.play();
+    // ──────────────────────────────────────────────────────────────
+    // PLAY NEXT SONG IN PLAYLIST
+    // ──────────────────────────────────────────────────────────────
+    const playNextInPlaylist = () => {
+        if (!currentSong) return;
+
+        for (const category of categories) {
+            const index = category.songs.findIndex(s => s.src === currentSong.src);
+            if (index !== -1) {
+                const nextIndex = index < category.songs.length - 1 ? index + 1 : 0; // ← loops playlist
+                const nextSong = category.songs[nextIndex];
+
+                const formatted = {
+                    src: nextSong.src,
+                    title: nextSong.name.split(" - ")[0].trim(),
+                    artist: nextSong.name.split(" - ").slice(1).join(" - ").trim() || "Unknown Artist",
+                };
+
+                setCurrentSong(formatted);
+                setIsPlaying(true);
+                setPlayedSongs(prev => new Set(prev).add(nextSong.src));
+                return;
+            }
         }
     };
 
-    const handleClosePlayer = () => {
-        if (audioRef.current) {
-            audioRef.current.pause();
-            audioRef.current.src = "";
+    // ──────────────────────────────────────────────────────────────
+    // SONG OF THE DAY CHAIN
+    // ──────────────────────────────────────────────────────────────
+    const playNextSongOfTheDay = () => {
+        const nextIndex = (sotdIndex + 1) % songs.length;
+        const nextSrc = songs[nextIndex];
+        const nextTitle = songNames[nextIndex].split(" - ")[0];
+        const nextArtist = songNames[nextIndex].split(" - ").slice(1).join(" - ") || "Unknown Artist";
+
+        setCurrentSong({
+            src: nextSrc,
+            title: nextTitle,
+            artist: nextArtist,
+            isSongOfTheDay: true,
+        });
+        setIsPlaying(true);
+        setPlayedSongs(prev => new Set(prev).add(nextSrc));
+    };
+
+    // ──────────────────────────────────────────────────────────────
+    // AUDIO CONTROL (play/pause + autoplay)
+    // ──────────────────────────────────────────────────────────────
+    useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio || !currentSong) return;
+
+        audio.src = currentSong.src;
+
+        if (isPlaying) {
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(err => {
+                    console.warn("Autoplay prevented:", err.message);
+                    setIsPlaying(false);
+                });
+            }
+        } else {
+            audio.pause();
         }
+
+        const handleEnded = () => {
+            if (currentSong.isSongOfTheDay) {
+                playNextSongOfTheDay();
+            } else {
+                playNextInPlaylist();
+            }
+        };
+
+        audio.addEventListener("ended", handleEnded);
+        return () => {
+            audio.removeEventListener("ended", handleEnded);
+            audio.pause();
+        };
+    }, [currentSong, isPlaying]);
+
+    // ──────────────────────────────────────────────────────────────
+    // GLOBAL CONTROLS
+    // ──────────────────────────────────────────────────────────────
+    const handleGlobalPlayPause = () => {
+        setIsPlaying(prev => !prev);
+    };
+
+    const handleClosePlayer = () => {
         setCurrentSong(null);
         setIsPlaying(false);
     };
 
-    const handleGlobalSkip = () => {
+    const skipEverything = () => {
         setShowLine2(true);
         setShowLine3(true);
         setHeaderDone(true);
         setSubmitted(true);
+        setIntroPhase("main");
     };
 
-    // Songs data (same as before)
-    const romanticSongs = [
-        { name: "L-O-V-E - Nat King Cole", src: "./music/L-O-V-E.opus", globalIndex: 7 },
-        { name: "Blue - yung kai", src: "./music/yung kai - blue (official music video).opus", globalIndex: 11 },
-        { name: "Way Back Into Love - Unknown", src: "./music/Way Back Into Love.opus", globalIndex: 10 },
-        { name: "I Love You So / Until I Found You - Unknown", src: "./music/I Love You So x Until I Found You.opus", globalIndex: 5 },
-        { name: "Fly Me to the Moon - Olivia Ong", src: "./music/FLY ME TO THE MOON - OLIVIA ONG (LYRICS).opus", globalIndex: 0 },
-        { name: "Can't Take My Eyes Off You - Craymer & Ruthie Craft", src: "./music/Can_t Take My Eyes Off You (Craymer & Ruthie Craft).opus", globalIndex: 2 },
-        { name: "My Love Mine All Mine - Mitski", src: "./music/Mitski - My Love Mine All Mine (Official Lyric Video).opus", globalIndex: 8 },
-        { name: "At My Worst - Pink Sweat$", src: "./music/Pink Sweat$ - At My Worst (Lyrics).opus", globalIndex: 9 },
-        { name: "Killing Me Softly - Unknown", src: "./music/Killing Me Softly.opus", globalIndex: 6 },
-        { name: "Just The Two Of Us - Bill Withers", src: "./music/Bill Withers  - Just The Two Of Us (Lyrics).opus", globalIndex: 1 },
-        { name: "Beanie - Chezile", src: "./music/Chezile - Beanie (Lyrics).opus", globalIndex: 3 },
-        { name: "Coyote Theory - This Side Of Paradise", src: "./music/Coyote theory - This Side Of Paradise (Lyrics).opus", globalIndex: 4 }
-    ];
+    useEffect(() => {
+        if (introPhase === "main") {
+            setTimeout(() => {
+                document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
+            }, 500);
+        }
+    }, [introPhase]);
 
-    const punkSongs = [
-        { name: "Un Día Entenderás - DannyLux", src: "./music/DannyLux - Un Día Entenderás (letra).opus", globalIndex: 13 },
-        { name: "Mi Historia Entre Tus Dedos - Eslabon Armado", src: "./music/Eslabon Armado - Mi Historia Entre Tus Dedos (Letras_Lyrics).opus", globalIndex: 15 },
-        { name: "Brindo - Mario Bautista", src: "./music/Mario Bautista - Brindo (Video Oficial).opus", globalIndex: 18 },
-        { name: "Jugaste y Sufrí - Eslabon Armado Ft DannyLux", src: "./music/Jugaste y Sufrí - Eslabon Armado Ft DannyLux (letra).opus", globalIndex: 16 },
-        { name: "Ella Baila Sola - Eslabon Armado & Peso Pluma", src: "./music/Eslabo Armado, Peso Pluma - Ella Baila Sola.opus", globalIndex: 14 },
-        { name: "Me Prendes - Eslabon Armado", src: "./music/Me Prendes - Eslabon Armado.opus", globalIndex: 19 },
-        { name: "Baby - Eslabon Armado", src: "./music/Baby - Eslabon Armado.opus", globalIndex: 12 },
-        { name: "Solo Me Dejaste - Grupo Marca Registrada", src: "./music/Solo Me Dejaste - Grupo Marca Registrada [Audio Oficial].opus", globalIndex: 20 },
-        { name: "1004 KM - Junior H", src: "./music/Junior H - 1004 KM (Letra_Lyrics).opus", globalIndex: 17 }
-    ];
-
-    const categories = [
-        { title: "Ito yung mga corny...", songs: romanticSongs },
-        { title: "Modern Corridos", songs: punkSongs },
-    ];
-
+    // ──────────────────────────────────────────────────────────────
+    // RENDER
+    // ──────────────────────────────────────────────────────────────
     return (
         <div className="min-h-screen text-white font-sans scroll-smooth relative overflow-hidden">
-            <Particles
-                className="fixed inset-0 -z-10 neon-glow"
-                quantity={30}
-                staticity={50}
-                ease={50}
-                size={0.3}
-                color="#E0FF4D"
-                vx={0}
-                vy={0}
-            />
+            <Particles className="fixed inset-0 -z-10" quantity={30} color="#E0FF4D" />
+            <audio ref={audioRef} preload="auto" />
 
-            {/* Hidden Global Audio */}
-            <audio ref={audioRef} />
+            {/* INTRO */}
+            {introPhase === "greeting" && (
+                <section id="home" className="flex flex-col justify-center min-h-screen text-left pl-4 pr-4 sm:pl-12 sm:pr-16 lg:pl-48 lg:pr-16 relative z-10">
+                    <p className="text-gray-400 text-sm mb-1">
+                        <TypewriterHeader text="Hi there..." onComplete={() => setShowLine2(true)} />
+                    </p>
 
-            {/* Home Section */}
-            <section id="home" className="flex flex-col justify-center min-h-screen text-left pl-4 pr-4 sm:pl-12 sm:pr-16 lg:pl-48 lg:pr-16 relative z-10">
-                <p className="text-gray-400 text-sm mb-1" style={{ fontFamily: "'Poppins', sans-serif" }}>
-                    <TypewriterHeader text="Hi there..." onComplete={() => setShowLine2(true)} />
-                </p>
+                    {showLine2 && (
+                        <h1 className="text-5xl font-bold mb-2 font-raleway">
+                            <TypewriterHeader text="This is my own little spot in the internet" onComplete={() => setShowLine3(true)} />
+                        </h1>
+                    )}
 
-                {showLine2 && (
-                    <h1 className="text-5xl font-bold mb-2 font-raleway">
-                        <TypewriterHeader text="This is my own little spot in the internet" onComplete={() => setShowLine3(true)} />
-                    </h1>
-                )}
+                    {showLine3 && (
+                        <h2 className="text-2xl text-gray-400 mb-6">
+                            <TypewriterHeader text="Welcome to my world!" onComplete={() => setHeaderDone(true)} />
+                        </h2>
+                    )}
 
-                {showLine3 && (
-                    <h2 className="text-2xl text-gray-400 mb-6 font-poppins" style={{ fontFamily: "'Poppins', sans-serif" }}>
-                        <TypewriterHeader text="Welcome to my world!" onComplete={() => setHeaderDone(true)} />
-                    </h2>
-                )}
+                    {!submitted && (
+                        <button onClick={skipEverything} className="absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 transition">
+                            Skip
+                        </button>
+                    )}
 
-                {!submitted && (
-                    <button onClick={handleGlobalSkip} className="absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500">
-                        Skip
-                    </button>
-                )}
+                    {headerDone && (
+                        <div className="space-y-4">
+                            <HomeBoxes name={name} setName={setName} submitted={submitted} setSubmitted={setSubmitted} />
 
-                {headerDone && (
-                    <HomeBoxes name={name} setName={setName} submitted={submitted} setSubmitted={setSubmitted} />
-                )}
-            </section>
-
-            {/* Main Content */}
-            {submitted && (
-                <>
-                    <section className="relative z-10"><MainContent name={name} /></section>
-
-                    {/* Song of the Day Button */}
-                    <section className="relative z-10 flex justify-center py-20">
-                        <SongOfTheDayButton onPlay={(song) => {
-                            setCurrentSong({ ...song, isSongOfTheDay: true });
-                            setIsPlaying(true);
-                        }} />
-                    </section>
-
-                    <section className="relative z-10"><MusicPlayer
-                        categories={categories}
-                        currentSong={currentSong}
-                        setCurrentSong={setCurrentSong}
-                        isPlaying={isPlaying}
-                        setIsPlaying={setIsPlaying}
-                    /></section>
-                </>
+                            {submitted && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+                                    className="flex justify-start"
+                                >
+                                    <button
+                                        onClick={() => setIntroPhase("main")}
+                                        // Optional: Auto-play SOTD on entry
+                                        // onClick={() => { setIntroPhase("main"); /* add SOTD autoplay here if you want */ }}
+                                        className="relative p-4 bg-gradient-to-br from-pink-500 via-rose-500 to-purple-600 rounded-full shadow-2xl 
+                                           hover:shadow-pink-500/80 animate-pulse border-4 border-white/30 group
+                                           hover:scale-110 transition-transform duration-200"
+                                    >
+                                        <div className="absolute inset-0 rounded-full bg-pink-400 blur-xl opacity-70 group-hover:opacity-100 transition-opacity" />
+                                        <div className="absolute inset-1 rounded-full bg-rose-400 blur-lg opacity-60" />
+                                        <FaPaperPlane className="w-6 h-6 text-white relative z-10 drop-shadow-lg" />
+                                    </button>
+                                </motion.div>
+                            )}
+                        </div>
+                    )}
+                </section>
             )}
 
-            {/* Global Music Bar */}
+            {/* MAIN CONTENT */}
+            {introPhase === "main" && (
+                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: "easeOut" }}>
+                    <MainContent name={name} />
+
+                    <div className="mt-12 flex justify-center px-6">
+                        <SongOfTheDayButton
+                            currentSong={currentSong}
+                            isPlaying={isPlaying}
+                            onPlay={(song) => {
+                                const formatted = { ...song, isSongOfTheDay: true };
+                                if (currentSong?.src === song.src && isPlaying) {
+                                    setIsPlaying(false);
+                                } else {
+                                    setCurrentSong(formatted);
+                                    setIsPlaying(true);
+                                    setPlayedSongs(prev => new Set(prev).add(song.src));
+                                }
+                            }}
+                        />
+                    </div>
+
+                    <section className="relative z-10 mt-32">
+                        <MusicPlayer
+                            categories={categories}
+                            currentSong={currentSong}
+                            setCurrentSong={setCurrentSong}
+                            isPlaying={isPlaying}
+                            setIsPlaying={setIsPlaying}
+                            playedSongs={playedSongs}
+                            setPlayedSongs={setPlayedSongs}
+                        />
+                    </section>
+                </motion.div>
+            )}
+
             <GlobalMusicBar
                 currentSong={currentSong}
                 isPlaying={isPlaying}
                 onPlayPause={handleGlobalPlayPause}
                 onClose={handleClosePlayer}
+                hasBeenPlayed={currentSong ? playedSongs.has(currentSong.src) : false}
             />
         </div>
     );

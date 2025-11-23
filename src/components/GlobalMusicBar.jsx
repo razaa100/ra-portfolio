@@ -11,9 +11,8 @@ import {
 const ICONS = [FaHeart, FaStar, FaMusic, FaMoon, FaFire, FaGem, FaBolt, FaLeaf, FaSun, FaCloud, FaSnowflake, FaFeather, FaRocket, FaHeartBroken, FaDice, FaYinYang, FaInfinity, FaPalette];
 const GRADIENTS = ["from-pink-500 to-rose-500", "from-purple-500 to-indigo-500", "from-blue-500 to-cyan-500", "from-green-500 to-emerald-500", "from-yellow-500 to-orange-500", "from-red-500 to-pink-500", "from-teal-500 to-cyan-500", "from-indigo-500 to-purple-500", "from-amber-500 to-red-500", "from-cyan-500 to-blue-500", "from-rose-500 to-pink-500", "from-violet-500 to-purple-500"];
 
-export default function GlobalMusicBar({ currentSong, isPlaying, onPlayPause, onClose }) {
+export default function GlobalMusicBar({ currentSong, isPlaying, onPlayPause, onClose, hasBeenPlayed = false }) {
     const progressRef = useRef(null);
-
     const [iconIndex, setIconIndex] = useState(0);
     const [gradientIndex, setGradientIndex] = useState(0);
 
@@ -46,6 +45,12 @@ export default function GlobalMusicBar({ currentSong, isPlaying, onPlayPause, on
 
     const { title = "", artist = "", isSongOfTheDay } = currentSong;
 
+    const titleColor = isPlaying
+        ? "text-emerald-400 font-bold drop-shadow-md"
+        : hasBeenPlayed
+            ? "text-emerald-600 font-medium"
+            : "text-white font-semibold";
+
     return (
         <AnimatePresence>
             {currentSong && (
@@ -57,52 +62,39 @@ export default function GlobalMusicBar({ currentSong, isPlaying, onPlayPause, on
                     transition={{ type: "spring", damping: 30, stiffness: 300 }}
                     className="fixed bottom-0 left-0 right-0 z-50 pointer-events-auto"
                 >
-                    {/* Compact bar — only 80px tall */}
                     <div className="px-4 pb-4 pt-2">
                         <div className="relative mx-auto max-w-3xl bg-gradient-to-r from-purple-900/80 via-pink-900/80 to-blue-900/80 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden h-20 flex items-center">
-
-                            {/* Subtle glow */}
                             <div className="absolute inset-0 bg-gradient-to-r from-pink-500/20 to-cyan-500/20 blur-xl -z-10 animate-pulse" />
 
-                            {/* Thin progress line */}
                             <div className="absolute top-0 left-0 right-0 h-0.5 bg-white/20">
-                                <div ref={progressRef} className="h-full bg-gradient-to-r from-pink-400 to-cyan-400 transition-all duration-300" style={{ width: "0%" }} />
+                                <div ref={progressRef} className="h-full bg-gradient-to-r from-emerald-400 to-cyan-400 transition-all" style={{ width: "0%" }} />
                             </div>
 
-                            {/* Icon */}
                             <div className="ml-4">
                                 <motion.div
                                     key={iconIndex}
                                     initial={{ scale: 0, rotate: -180 }}
                                     animate={{ scale: 1, rotate: 0 }}
+                                    transition={{ type: "spring", stiffness: 300 }}
                                     className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-lg`}
                                 >
-                                    <IconComponent className="w-7 h-7 text-white" />
+                                    <IconComponent className="w-7 h-7 text-white drop-shadow" />
                                 </motion.div>
                             </div>
 
-                            {/* Song info (compact) */}
                             <div className="ml-4 flex-1 min-w-0">
-                                <p className="text-white font-semibold text-sm truncate flex items-center gap-2">
+                                <p className={`text-sm truncate flex items-center gap-2 ${titleColor}`}>
                                     {title}
-                                    {isSongOfTheDay && <span className="text-xs bg-yellow-500/30 text-yellow-300 px-2 py-0.5 rounded-full">SOTD</span>}
+                                    {isSongOfTheDay && <span className="text-xs bg-yellow-500/30 text-yellow-300 px-2 py-0.5 rounded-full border border-yellow-500/50">SOTD</span>}
                                 </p>
                                 <p className="text-gray-300 text-xs truncate">{artist}</p>
                             </div>
 
-                            {/* Controls */}
                             <div className="flex items-center gap-3 mr-4">
-                                <button
-                                    onClick={onPlayPause}
-                                    className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-all hover:scale-110"
-                                >
+                                <button onClick={onPlayPause} className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-all hover:scale-110 shadow-md">
                                     {isPlaying ? <FaPause className="w-5 h-5 text-white" /> : <FaPlay className="w-5 h-5 text-white ml-0.5" />}
                                 </button>
-
-                                <button
-                                    onClick={onClose}
-                                    className="p-2.5 bg-white/10 hover:bg-white/20 rounded-full transition-all hover:scale-110"
-                                >
+                                <button onClick={onClose} className="p-2.5 bg-white/10 hover:bg-white/20 rounded-full transition-all hover:scale-110">
                                     <FaTimes className="w-4 h-4 text-white/70" />
                                 </button>
                             </div>

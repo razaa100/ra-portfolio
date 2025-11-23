@@ -122,8 +122,6 @@ export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
                     <p className="text-gray-300">
                         Nice to meet you, <b className="text-yellow-400">{name}</b>!
                         {isSpecial && " This is for you"}
-                        <br />
-                        <i>(Please scroll down)</i>
                     </p>
                 </motion.div>
             )}
