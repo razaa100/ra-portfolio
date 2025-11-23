@@ -1,11 +1,12 @@
 // src/Portfolio.jsx
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import HomeBoxes from "./HomeBoxes";
-import { Particles } from "./Particles";   // correct path
+import { Particles } from "./Particles";
 import TypewriterHeader from "./TypewriterHeader";
 import MainContent from "./MainContent";
 import MusicPlayer from "./MusicPlayer";
-import Skills from "./Skills";
+import SongOfTheDayButton from "./SongOfTheDayButton";
+import GlobalMusicBar from "./GlobalMusicBar";
 
 export default function Portfolio() {
     const [showLine2, setShowLine2] = useState(false);
@@ -14,7 +15,74 @@ export default function Portfolio() {
     const [name, setName] = useState("");
     const [submitted, setSubmitted] = useState(false);
 
-    // ────── SONGS ──────
+    // Global Music State
+    const [currentSong, setCurrentSong] = useState(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const audioRef = useRef(null);
+
+    // Sync audio source and play/pause
+    useEffect(() => {
+        if (!audioRef.current || !currentSong) return;
+
+        audioRef.current.src = currentSong.src;
+        audioRef.current.load();
+
+        if (isPlaying) {
+            audioRef.current.play().catch(() => setIsPlaying(false));
+        } else {
+            audioRef.current.pause();
+        }
+    }, [currentSong]);
+
+    // Sync global isPlaying state with actual audio events
+    useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio) return;
+
+        const handlePlay = () => setIsPlaying(true);
+        const handlePause = () => setIsPlaying(false);
+        const handleEnded = () => {
+            setIsPlaying(false);
+            // Optional: auto-next or loop
+        };
+
+        audio.addEventListener("play", handlePlay);
+        audio.addEventListener("pause", handlePause);
+        audio.addEventListener("ended", handleEnded);
+
+        return () => {
+            audio.removeEventListener("play", handlePlay);
+            audio.removeEventListener("pause", handlePause);
+            audio.removeEventListener("ended", handleEnded);
+        };
+    }, [currentSong]);
+
+    const handleGlobalPlayPause = () => {
+        if (!audioRef.current) return;
+        if (isPlaying) {
+            audioRef.current.pause();
+        } else {
+            audioRef.current.play();
+        }
+    };
+
+    const handleClosePlayer = () => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.src = "";
+        }
+        setCurrentSong(null);
+        setIsPlaying(false);
+    };
+
+    const handleGlobalSkip = () => {
+        setShowLine2(true);
+        setShowLine3(true);
+        setHeaderDone(true);
+        setSubmitted(true);
+    };
+
+    // Songs data (same as before)
     const romanticSongs = [
         { name: "L-O-V-E - Nat King Cole", src: "./music/L-O-V-E.opus", globalIndex: 7 },
         { name: "Blue - yung kai", src: "./music/yung kai - blue (official music video).opus", globalIndex: 11 },
@@ -44,21 +112,11 @@ export default function Portfolio() {
 
     const categories = [
         { title: "Ito yung mga corny...", songs: romanticSongs },
-        { title: "Ito yung mga not so corny", songs: punkSongs },
+        { title: "Modern Corridos", songs: punkSongs },
     ];
 
-    const handleGlobalSkip = () => {
-        setShowLine2(true);
-        setShowLine3(true);
-        setHeaderDone(true);
-        setSubmitted(true);
-    };
-
     return (
-        /* DARK ROOT + OVERFLOW HIDDEN */
         <div className="min-h-screen text-white font-sans scroll-smooth relative overflow-hidden">
-
-            {/* PARTICLES */}
             <Particles
                 className="fixed inset-0 -z-10 neon-glow"
                 quantity={30}
@@ -70,13 +128,11 @@ export default function Portfolio() {
                 vy={0}
             />
 
-            {/* HOME */}
-            <section
-                id="home"
-                className="flex flex-col justify-center min-h-screen text-left
-                   pl-4 pr-4 sm:pl-12 sm:pr-16 lg:pl-48 lg:pr-16
-                   relative z-10"
-            >
+            {/* Hidden Global Audio */}
+            <audio ref={audioRef} />
+
+            {/* Home Section */}
+            <section id="home" className="flex flex-col justify-center min-h-screen text-left pl-4 pr-4 sm:pl-12 sm:pr-16 lg:pl-48 lg:pr-16 relative z-10">
                 <p className="text-gray-400 text-sm mb-1" style={{ fontFamily: "'Poppins', sans-serif" }}>
                     <TypewriterHeader text="Hi there..." onComplete={() => setShowLine2(true)} />
                 </p>
@@ -94,32 +150,46 @@ export default function Portfolio() {
                 )}
 
                 {!submitted && (
-                    <button
-                        onClick={handleGlobalSkip}
-                        className="absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500"
-                    >
+                    <button onClick={handleGlobalSkip} className="absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500">
                         Skip
                     </button>
                 )}
 
                 {headerDone && (
-                    <HomeBoxes
-                        name={name}
-                        setName={setName}
-                        submitted={submitted}
-                        setSubmitted={setSubmitted}
-                    />
+                    <HomeBoxes name={name} setName={setName} submitted={submitted} setSubmitted={setSubmitted} />
                 )}
             </section>
 
-            {/* OTHER SECTIONS */}
+            {/* Main Content */}
             {submitted && (
                 <>
                     <section className="relative z-10"><MainContent name={name} /></section>
-                    <section className="relative z-10"><MusicPlayer categories={categories} /></section>
-                    {/* <section className="relative z-10"><Skills /></section> */}
+
+                    {/* Song of the Day Button */}
+                    <section className="relative z-10 flex justify-center py-20">
+                        <SongOfTheDayButton onPlay={(song) => {
+                            setCurrentSong({ ...song, isSongOfTheDay: true });
+                            setIsPlaying(true);
+                        }} />
+                    </section>
+
+                    <section className="relative z-10"><MusicPlayer
+                        categories={categories}
+                        currentSong={currentSong}
+                        setCurrentSong={setCurrentSong}
+                        isPlaying={isPlaying}
+                        setIsPlaying={setIsPlaying}
+                    /></section>
                 </>
             )}
+
+            {/* Global Music Bar */}
+            <GlobalMusicBar
+                currentSong={currentSong}
+                isPlaying={isPlaying}
+                onPlayPause={handleGlobalPlayPause}
+                onClose={handleClosePlayer}
+            />
         </div>
     );
 }

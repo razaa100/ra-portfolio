@@ -1,97 +1,127 @@
-import React, { useState, useRef, useEffect } from "react";
-import { FaPlay, FaPause } from "react-icons/fa";
+// MusicPlayer.jsx
+import React, { useState } from "react";
+import { FaPlay, FaPause, FaChevronDown } from "react-icons/fa";
 
-export default function MusicPlayer({ categories }) {
-    const [currentSongIndex, setCurrentSongIndex] = useState(null);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [clickedSongs, setClickedSongs] = useState(new Set()); // track clicked songs
-    const audioRef = useRef(null);
+export default function MusicPlayer({ categories, currentSong, setCurrentSong, isPlaying, setIsPlaying }) {
+    const [openCategories, setOpenCategories] = useState({
+        "Ito yung mga corny...": true,
+        "Modern Corridos": false,
+    });
 
-    const allSongs = categories.flatMap(cat => cat.songs);
+    const toggleCategory = (title) => {
+        setOpenCategories(prev => ({ ...prev, [title]: !prev[title] }));
+    };
 
-    const handlePlayPause = (index) => {
-        setClickedSongs(prev => new Set(prev).add(index));
+    const handlePlayPause = (song) => {
+        const formatted = {
+            src: song.src,
+            title: song.name.split(" - ")[0],
+            artist: song.name.split(" - ").slice(1).join(" - ") || "Unknown Artist",
+        };
 
-        if (currentSongIndex === index) {
-            if (isPlaying) {
-                audioRef.current.pause();
-                setIsPlaying(false);
-            } else {
-                audioRef.current.play();
-                setIsPlaying(true);
-            }
+        if (currentSong?.src === formatted.src) {
+            // Toggle play/pause
+            setIsPlaying(!isPlaying);
         } else {
-            setCurrentSongIndex(index);
+            setCurrentSong(formatted);
             setIsPlaying(true);
         }
     };
 
-    // Autoplay next song when one ends
-    const handleEnded = () => {
-        const currentIndex = allSongs.findIndex(s => s.globalIndex === currentSongIndex);
-        const nextIndex = (currentIndex + 1) % allSongs.length;
-        setCurrentSongIndex(allSongs[nextIndex].globalIndex);
-        setIsPlaying(true);
+    const formatSong = (name) => {
+        const parts = name.split(" - ");
+        if (parts.length >= 2) {
+            return { title: parts[0].trim(), artist: parts.slice(1).join(" - ").trim() };
+        }
+        return { title: name, artist: "" };
     };
 
-    useEffect(() => {
-        if (currentSongIndex !== null && audioRef.current) {
-            audioRef.current.load();
-            audioRef.current.play().catch(err => console.log(err));
+    const categoryStyles = {
+        "Ito yung mga corny...": {
+            gradient: "from-pink-900/30 via-purple-900/20 to-transparent",
+            accent: "text-pink-400",
+            hover: "hover:border-pink-500/40",
+            glow: "shadow-pink-500/10",
+        },
+        "Modern Corridos": {
+            gradient: "from-cyan-900/30 via-blue-900/20 to-transparent",
+            accent: "text-cyan-400",
+            hover: "hover:border-cyan-500/40",
+            glow: "shadow-cyan-500/10",
         }
-    }, [currentSongIndex]);
+    };
 
     return (
-        <section id="music" className="py-24 px-8">
-            {/* Main Header */}
-            <h1 className="text-4xl font-bold mb-12 text-center text-white font-['Poppins']">
-                These are the <span className="text-yellow-400">songs </span> that I listen to...
+        <section id="music" className="py-20 px-5 max-w-3xl mx-auto">
+            <h1 className="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                Check out my playlists :)
             </h1>
 
-            <div className="flex flex-col md:flex-row gap-8 justify-center">
-                {categories.map((category) => (
-                    <div key={category.title} className="flex-1">
-                        <h2 className="text-3xl font-semibold mb-6 text-center text-white font-['Poppins']">
-                            {category.title}
-                        </h2>
-                        <div className="flex flex-col gap-4">
-                            {category.songs.map((song) => (
-                                <div
-                                    key={song.globalIndex}
-                                    className={`flex items-center justify-between p-3 rounded-2xl shadow-lg ${clickedSongs.has(song.globalIndex)
-                                        ? "bg-red-900"
-                                        : "bg-neutral-800"
-                                        }`}
-                                >
-                                    <p className="text-gray-200 font-['Raleway']">{song.name}</p>
-                                    <button
-                                        onClick={() => handlePlayPause(song.globalIndex)}
-                                        className="text-white bg-blue-600 p-2 rounded-full hover:bg-blue-500"
-                                    >
-                                        {currentSongIndex === song.globalIndex && isPlaying ? (
-                                            <FaPause />
-                                        ) : (
-                                            <FaPlay />
-                                        )}
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                ))}
-            </div>
+            <div className="space-y-4">
+                {categories.map((category) => {
+                    const isOpen = openCategories[category.title] ?? false;
+                    const style = categoryStyles[category.title] || categoryStyles["Ito yung mga corny..."];
 
-            {currentSongIndex !== null && (
-                <div className="mt-8 flex justify-center">
-                    <audio ref={audioRef} controls onEnded={handleEnded}>
-                        <source
-                            src={allSongs.find(s => s.globalIndex === currentSongIndex)?.src}
-                            type="audio/mpeg"
-                        />
-                        Your browser does not support the audio element.
-                    </audio>
-                </div>
-            )}
+                    return (
+                        <div
+                            key={category.title}
+                            className={`rounded-2xl overflow-hidden border backdrop-blur-md bg-gradient-to-br ${style.gradient} border-white/10 ${style.hover} shadow-lg ${style.glow} transition-all duration-500 hover:scale-[1.02]`}
+                        >
+                            <button
+                                onClick={() => toggleCategory(category.title)}
+                                className="w-full px-5 py-4 flex items-center justify-between group"
+                            >
+                                <h2 className={`text-lg md:text-xl font-bold ${style.accent}`}>
+                                    {category.title}
+                                </h2>
+                                <FaChevronDown className={`text-lg transition-transform duration-400 ${isOpen ? "rotate-180" : ""} ${style.accent}`} />
+                            </button>
+
+                            <div className={`transition-all duration-600 ease-out ${isOpen ? "opacity-100" : "max-h-0 opacity-0"} overflow-hidden`}>
+                                <div className="px-5 pb-5 pt-2 space-y-3">
+                                    {category.songs.map((song) => {
+                                        const { title, artist } = formatSong(song.name);
+                                        const isActive = currentSong?.src === song.src;
+                                        const isCurrentlyPlaying = isActive && isPlaying;
+
+                                        return (
+                                            <div key={song.globalIndex} className="flex items-center justify-between group/song py-2">
+                                                <div className="flex-1 min-w-0 pr-3">
+                                                    <p className={`text-base md:text-lg font-medium truncate transition-colors
+                            ${isActive ? "text-white" : "text-gray-300"}
+                            group-hover/song:text-white
+                          `}>
+                                                        {title}
+                                                    </p>
+                                                    {artist && (
+                                                        <p className="text-xs md:text-sm text-gray-500 truncate">{artist}</p>
+                                                    )}
+                                                </div>
+
+                                                <button
+                                                    onClick={() => handlePlayPause(song)}
+                                                    className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-300
+                            ${isCurrentlyPlaying
+                                                            ? "border-white/70 bg-white/10 scale-105"
+                                                            : "border-white/20 group-hover/song:border-white/50"
+                                                        }
+                          `}
+                                                >
+                                                    {isCurrentlyPlaying ? (
+                                                        <FaPause className="w-4 h-4 text-white" />
+                                                    ) : (
+                                                        <FaPlay className="w-4 h-4 text-white/60 ml-0.5 group-hover/song:text-white" />
+                                                    )}
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
         </section>
     );
 }
