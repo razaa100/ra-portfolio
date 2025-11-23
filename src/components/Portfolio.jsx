@@ -60,12 +60,12 @@ export default function Portfolio() {
 
             {/* PARTICLES – exact shadcn behavior */}
             <Particles
-                className="fixed inset-0 -z-10"
+                className="fixed inset-0 -z-10 neon-glow"
                 quantity={100}
                 staticity={50}
                 ease={50}
-                size={0.4}
-                color="#ffffff"
+                size={0.7}
+                color="#E0FF00"
                 vx={0}
                 vy={0}
             />
