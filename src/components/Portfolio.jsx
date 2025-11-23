@@ -58,14 +58,14 @@ export default function Portfolio() {
         /* DARK ROOT + OVERFLOW HIDDEN */
         <div className="min-h-screen text-white font-sans scroll-smooth relative overflow-hidden">
 
-            {/* PARTICLES – exact shadcn behavior */}
+            {/* PARTICLES */}
             <Particles
                 className="fixed inset-0 -z-10 neon-glow"
                 quantity={100}
                 staticity={50}
                 ease={50}
                 size={0.7}
-                color="#E0FF00"
+                color="#E0FF4D"
                 vx={0}
                 vy={0}
             />

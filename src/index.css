@@ -24,22 +24,21 @@ p {
   font-family: 'Raleway', sans-serif;
 }
 
+/* Neon Glow for Particles */
 .neon-glow canvas {
-  /* Super bright electric lime-yellow */
   filter:
-    drop-shadow(0 0 8px #e0ff00) drop-shadow(0 0 20px #e0ff00) drop-shadow(0 0 40px #ccff00) drop-shadow(0 0 70px #aaff00);
-
-  animation: neon-pulse 3.5s ease-in-out infinite alternate;
+    drop-shadow(0 0 6px #ccff00) drop-shadow(0 0 15px #ccff00) drop-shadow(0 0 30px #ccff00);
+  animation: neon-pulse 4s ease-in-out infinite alternate;
 }
 
 @keyframes neon-pulse {
   from {
     filter:
-      drop-shadow(0 0 8px #e0ff00) drop-shadow(0 0 20px #e0ff00) drop-shadow(0 0 40px #ccff00) drop-shadow(0 0 70px #aaff00);
+      drop-shadow(0 0 6px #ccff00) drop-shadow(0 0 15px #ccff00) drop-shadow(0 0 30px #ccff00);
   }
 
   to {
     filter:
-      drop-shadow(0 0 12px #efff00) drop-shadow(0 0 30px #f0ff00) drop-shadow(0 0 60px #ccff00) drop-shadow(0 0 100px #aaff00);
+      drop-shadow(0 0 8px #ccff00) drop-shadow(0 0 20px #ccff00) drop-shadow(0 0 40px #ccff00);
   }
 }
