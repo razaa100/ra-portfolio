@@ -125,7 +125,53 @@ export default function Portfolio() {
             {/* INTRO */}
             {introPhase === "greeting" && (
                 <section id="home" className="flex flex-col justify-center min-h-screen text-left pl-4 pr-4 sm:pl-12 sm:pr-16 lg:pl-48 lg:pr-16 relative z-10">
-                    {/* ... your intro code ... */}
+                    <p className="text-gray-400 text-sm mb-1">
+                        <TypewriterHeader text="Hi there..." onComplete={() => setShowLine2(true)} />
+                    </p>
+
+                    {showLine2 && (
+                        <h1 className="text-5xl font-bold mb-2 font-raleway">
+                            <TypewriterHeader text="This is my own little spot in the internet" onComplete={() => setShowLine3(true)} />
+                        </h1>
+                    )}
+
+                    {showLine3 && (
+                        <h2 className="text-2xl text-gray-400 mb-6">
+                            <TypewriterHeader text="Welcome to my world!" onComplete={() => setHeaderDone(true)} />
+                        </h2>
+                    )}
+
+                    {!submitted && (
+                        <button onClick={skipEverything} className="absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 transition">
+                            Skip
+                        </button>
+                    )}
+
+                    {headerDone && (
+                        <div className="space-y-4">
+                            <HomeBoxes name={name} setName={setName} submitted={submitted} setSubmitted={setSubmitted} />
+
+                            {submitted && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.8, delay: 0.4 }}
+                                    className="flex justify-start"
+                                >
+                                    <button
+                                        onClick={() => setIntroPhase("main")}
+                                        className="relative p-4 bg-gradient-to-br from-pink-500 via-rose-500 to-purple-600 rounded-full shadow-2xl 
+                       hover:shadow-pink-500/80 animate-pulse border-4 border-white/30 group
+                       hover:scale-110 transition-transform duration-200"
+                                    >
+                                        <div className="absolute inset-0 rounded-full bg-pink-400 blur-xl opacity-70 group-hover:opacity-100 transition-opacity" />
+                                        <div className="absolute inset-1 rounded-full bg-rose-400 blur-lg opacity-60" />
+                                        <FaPaperPlane className="w-6 h-6 text-white relative z-10 drop-shadow-lg" />
+                                    </button>
+                                </motion.div>
+                            )}
+                        </div>
+                    )}
                 </section>
             )}
 
