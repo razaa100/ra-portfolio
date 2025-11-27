@@ -11,44 +11,33 @@ export default function MusicPlayer({
     playedSongs,
     setPlayedSongs,
 }) {
-    const [openCategories, setOpenCategories] = useState({
-        "Corny af": false,
-        "Modern Corridos": false,
-    });
+    const [openCategories, setOpenCategories] = useState({});
 
     const toggleCategory = (title) => {
-        setOpenCategories(prev => ({ ...prev, [title]: !prev[title] }));
+        setOpenCategories((prev) => ({ ...prev, [title]: !prev[title] }));
     };
 
     const handlePlayPause = (song) => {
-        const formattedSong = {
-            src: song.src,
-            title: song.name.split(" - ")[0].trim(),
-            artist: song.name.split(" - ").slice(1).join(" - ").trim() || "Unknown Artist",
-        };
-
-        // Same song clicked
         if (currentSong?.src === song.src) {
-            setIsPlaying(!isPlaying); // Toggle play/pause
-        }
-        // Different song → switch to it
-        else {
-            setCurrentSong(formattedSong);
+            setIsPlaying(!isPlaying);
+        } else {
+            setCurrentSong(song);
             setIsPlaying(true);
-            setPlayedSongs(prev => new Set(prev).add(song.src));
+            setPlayedSongs((prev) => new Set(prev).add(song.src));
         }
     };
 
-    const formatSong = (name) => {
-        const parts = name.split(" - ");
-        return parts.length >= 2
-            ? { title: parts[0].trim(), artist: parts.slice(1).join(" - ").trim() }
-            : { title: name, artist: "" };
-    };
-
-    const categoryStyles = {
-        "Corny af": { accent: "text-pink-400", hover: "hover:border-pink-500/40" },
-        "Modern Corridos": { accent: "text-cyan-400", hover: "hover:border-cyan-500/40" }
+    const getCategoryStyle = (title) => {
+        const styles = {
+            "Corny af": { accent: "text-pink-400", hover: "hover:border-pink-500/40" },
+            "Classic Rock": { accent: "text-orange-400", hover: "hover:border-orange-500/40" },
+            "Electro": { accent: "text-purple-400", hover: "hover:border-purple-500/40" },
+            "Modern Corridos": { accent: "text-cyan-400", hover: "hover:border-cyan-500/40" },
+            "Nerdy Music": { accent: "text-green-400", hover: "hover:border-green-500/40" },
+            "OPM": { accent: "text-yellow-400", hover: "hover:border-yellow-500/40" },
+            "Indie": { accent: "text-blue-400", hover: "hover:border-blue-500/40" },
+        };
+        return styles[title] || { accent: "text-purple-400", hover: "hover:border-purple-500/40" };
     };
 
     return (
@@ -56,13 +45,17 @@ export default function MusicPlayer({
             <h1 className="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
                 Check out my playlists :)
             </h1>
+
             <div className="space-y-4">
                 {categories.map((category) => {
                     const isOpen = openCategories[category.title] ?? false;
-                    const style = categoryStyles[category.title] || categoryStyles["Ito yung mga corny..."];
+                    const style = getCategoryStyle(category.title);
 
                     return (
-                        <div key={category.title} className={`rounded-2xl overflow-hidden border backdrop-blur-md bg-gradient-to-br from-pink-900/30 via-purple-900/20 to-transparent border-white/10 ${style.hover} shadow-lg transition-all duration-300`}>
+                        <div
+                            key={category.title}
+                            className={`rounded-2xl overflow-hidden border backdrop-blur-md bg-gradient-to-br from-pink-900/30 via-purple-900/20 to-transparent border-white/10 ${style.hover} shadow-lg transition-all duration-300`}
+                        >
                             <button
                                 onClick={() => toggleCategory(category.title)}
                                 className="w-full px-5 py-4 flex items-center justify-between group hover:bg-white/5 transition-colors"
@@ -70,19 +63,40 @@ export default function MusicPlayer({
                                 <h2 className={`text-lg md:text-xl font-bold ${style.accent} group-hover:text-white transition-colors`}>
                                     {category.title}
                                 </h2>
-                                <FaChevronDown className={`text-lg transition-transform duration-400 ${isOpen ? "rotate-180" : ""} ${style.accent} group-hover:text-white`} />
+                                <FaChevronDown
+                                    className={`text-lg transition-transform duration-400 ${isOpen ? "rotate-180" : ""} ${style.accent} group-hover:text-white`}
+                                />
                             </button>
 
                             <div
-                                className={`transition-all duration-500 ease-out ${isOpen ? "max-h-96 opacity-100 overflow-y-auto scrollbar-thin scrollbar-thumb-rounded-full" : "max-h-0 opacity-0 overflow-hidden"} 
-                scrollbar-thumb-purple-500/50 scrollbar-track-transparent hover:scrollbar-thumb-purple-400/70`}
+                                className={`transition-all duration-500 ease-out scrollbar-custom ${isOpen ? "max-h-96 opacity-100 overflow-y-auto" : "max-h-0 opacity-0 overflow-hidden"}`}
                                 style={{
-                                    scrollbarColor: "#a78bfa transparent", // fallback for Firefox 
+                                    "--thumb-color":
+                                        style.accent.includes("pink") ? "#ec4899" :
+                                            style.accent.includes("cyan") ? "#06b6d4" :
+                                                style.accent.includes("orange") ? "#fb923c" :
+                                                    style.accent.includes("green") ? "#10b981" :
+                                                        style.accent.includes("yellow") ? "#facc15" :
+                                                            "#a855f7",
+                                    "--thumb-glow":
+                                        style.accent.includes("pink") ? "#ec4899aa" :
+                                            style.accent.includes("cyan") ? "#06b6d4aa" :
+                                                style.accent.includes("orange") ? "#fb923caa" :
+                                                    style.accent.includes("green") ? "#10b981aa" :
+                                                        style.accent.includes("yellow") ? "#facc15aa" :
+                                                            "#a855f7aa",
                                 }}
                             >
                                 <div className="px-5 pb-5 pt-2 space-y-3">
+                                    {/* Playlist description / blurb */}
+                                    {category.description && (
+                                        <p className="text-sm text-gray-400 italic pb-4 border-b border-white/10 leading-relaxed">
+                                            {category.description}
+                                        </p>
+                                    )}
+
+                                    {/* Songs */}
                                     {category.songs.map((song) => {
-                                        const { title, artist } = formatSong(song.name);
                                         const isActive = currentSong?.src === song.src;
                                         const isCurrentlyPlaying = isActive && isPlaying;
                                         const hasBeenPlayed = playedSongs.has(song.src);
@@ -100,22 +114,21 @@ export default function MusicPlayer({
                                             >
                                                 <div className="flex-1 min-w-0 pr-3">
                                                     <p className={`text-base md:text-lg truncate transition-all group-hover/song:text-white ${titleColor}`}>
-                                                        {title}
+                                                        {song.title}
                                                     </p>
-                                                    {artist && (
+                                                    {song.artist && (
                                                         <p className="text-xs md:text-sm text-gray-500 truncate group-hover/song:text-gray-300 transition-colors">
-                                                            {artist}
+                                                            {song.artist}
                                                         </p>
                                                     )}
                                                 </div>
+
                                                 <button
                                                     onClick={() => handlePlayPause(song)}
-                                                    className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-300 shadow-md
-                                                        ${isCurrentlyPlaying
-                                                            ? "border-emerald-400 bg-emerald-400/20 scale-110 shadow-emerald-400/50"
-                                                            : "border-white/20 group-hover/song:border-white/50 hover:scale-105"
-                                                        }
-                                                    `}
+                                                    className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-300 shadow-md ${isCurrentlyPlaying
+                                                        ? "border-emerald-400 bg-emerald-400/20 scale-110 shadow-emerald-400/50"
+                                                        : "border-white/20 group-hover/song:border-white/50 hover:scale-105"
+                                                        }`}
                                                 >
                                                     {isCurrentlyPlaying ? (
                                                         <FaPause className="w-4 h-4 text-emerald-300" />

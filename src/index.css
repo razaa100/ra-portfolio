@@ -59,30 +59,38 @@ canvas.fixed {
 }
 
 
-/* Custom Neon Scrollbar */
-.scrollbar-thin {
-  scrollbar-width: thin;
-}
-
-/* Webkit browsers (Chrome, Safari, Edge) */
-.scrollbar-thin::-webkit-scrollbar {
+/* Scroll bar - Arrow Removal Fixed */
+.scrollbar-custom::-webkit-scrollbar {
   width: 8px;
 }
 
-.scrollbar-thin::-webkit-scrollbar-track {
+.scrollbar-custom::-webkit-scrollbar-track {
   background: transparent;
-  border-radius: 4px;
+  border-radius: 12px;
+  margin: 0;
+  /* Eliminates space from removed arrows */
 }
 
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: rgba(168, 85, 247, 0.5);
-  /* purple-500/50 */
-  border-radius: 9999px;
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--thumb-color), color-mix(in srgb, var(--thumb-color) 70%, #000));
+  border-radius: 12px;
   border: 2px solid transparent;
   background-clip: content-box;
+  box-shadow: 0 0 16px var(--thumb-glow), inset 0 0 8px var(--thumb-glow);
 }
 
-.scrollbar-thin:hover::-webkit-scrollbar-thumb {
-  background: rgba(168, 85, 247, 0.7);
-  /* purple-400/70 */
+/* Remove arrows - Fixed for 2025 WebKit */
+.scrollbar-custom::-webkit-scrollbar-button {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+.scrollbar-custom::-webkit-scrollbar-button:decrement,
+.scrollbar-custom::-webkit-scrollbar-button:increment,
+.scrollbar-custom::-webkit-scrollbar-button:start,
+.scrollbar-custom::-webkit-scrollbar-button:end {
+  width: 0px !important;
+  height: 0px !important;
+  display: none !important;
 }

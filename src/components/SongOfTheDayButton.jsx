@@ -3,53 +3,19 @@ import React from "react";
 import { motion } from "framer-motion";
 import { FaPlay, FaPause } from "react-icons/fa";
 
-const songs = [
-    "./music/L-O-V-E.opus",
-    "./music/yung kai - blue (official music video).opus",
-    "./music/Way Back Into Love.opus",
-    "./music/I Love You So x Until I Found You.opus",
-    "./music/FLY ME TO THE MOON - OLIVIA ONG (LYRICS).opus",
-    "./music/Can_t Take My Eyes Off You (Craymer & Ruthie Craft).opus",
-    "./music/Mitski - My Love Mine All Mine (Official Lyric Video).opus",
-    "./music/Pink Sweat$ - At My Worst (Lyrics).opus",
-    "./music/Killing Me Softly.opus",
-    "./music/Bill Withers  - Just The Two Of Us (Lyrics).opus",
-    "./music/Chezile - Beanie (Lyrics).opus",
-    "./music/Coyote theory - This Side Of Paradise (Lyrics).opus",
-    "./music/DannyLux - Un Día Entenderás (letra).opus",
-    "./music/Eslabo Armado, Peso Pluma - Ella Baila Sola.opus",
-    "./music/Xavi - La Víctima.opus",
-    "./music/Xavi - La Diabla.opus"
-];
-
-const songNames = [
-    "L-O-V-E - Nat King Cole",
-    "Blue - yung kai",
-    "Way Back Into Love",
-    "I Love You So / Until I Found You",
-    "Fly Me to the Moon - Olivia Ong",
-    "Can't Take My Eyes Off You",
-    "My Love Mine All Mine - Mitski",
-    "At My Worst - Pink Sweat$",
-    "Killing Me Softly",
-    "Just The Two Of Us - Bill Withers",
-    "Beanie - Chezile",
-    "This Side Of Paradise - Coyote Theory",
-    "Un Día Entenderás - DannyLux",
-    "Ella Baila Sola - Eslabon Armado & Peso Pluma",
-];
-
 export default function SongOfTheDayButton({
+    allSongs, // Now receives allSongs to pull from all
     currentSong,
     isPlaying,
-    onPlay, // This will set the song + toggle play/pause
+    onPlay,
 }) {
     const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-    const songIndex = dayOfYear % songs.length;
+    const songIndex = dayOfYear % allSongs.length;
 
-    const sotdSrc = songs[songIndex];
-    const sotdTitle = songNames[songIndex].split(" - ")[0];
-    const sotdArtist = songNames[songIndex].split(" - ").slice(1).join(" - ") || "Unknown Artist";
+    const sotd = allSongs[songIndex];
+    const sotdSrc = sotd.src;
+    const sotdTitle = sotd.title;
+    const sotdArtist = sotd.artist || "Unknown Artist";
 
     // Is the Song of the Day currently active and playing?
     const isSotdActive = currentSong?.src === sotdSrc && currentSong?.isSongOfTheDay;
