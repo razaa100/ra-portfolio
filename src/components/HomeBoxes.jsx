@@ -106,7 +106,7 @@ export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
                 <button
                     onClick={handleNext}
                     disabled={isTyping || (boxes[currentBox]?.isInput && !name.trim())}
-                    className="p-2 bg-neutral-600 rounded-lg hover:bg-neutral-500 text-white inline-flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-2 bg-blue-600 rounded-lg hover:bg-blue-500 text-white inline-flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <FaPaperPlane />
                 </button>

@@ -176,7 +176,7 @@ export default function Portfolio() {
                 <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2 }}>
                     <MainContent name={name} />
 
-                    <div className="mt-12 flex justify-center px-6">
+                    <div className="mt-1 flex justify-center px-6">
                         <SongOfTheDayButton
                             currentSong={currentSong}
                             isPlaying={isPlaying}
