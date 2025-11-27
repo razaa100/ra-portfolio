@@ -25,10 +25,25 @@ p {
 }
 
 /* Neon Glow for Particles */
-.neon-glow canvas {
+/* DYNAMIC NEON GLOW — follows particle color perfectly */
+canvas.fixed {
+  /* We inject the current color via inline style from Particles.jsx */
+  /* fallback = lime */
   filter:
-    drop-shadow(0 0 6px #ccff00) drop-shadow(0 0 15px #ccff00) drop-shadow(0 0 30px #ccff00);
-  animation: neon-pulse 4s ease-in-out infinite alternate;
+    drop-shadow(0 0 8px var(--glow-color, #ccff00)) drop-shadow(0 0 20px var(--glow-color, #ccff00)) drop-shadow(0 0 40px var(--glow-color, #ccff00));
+  animation: neon-pulse 5s ease-in-out infinite alternate;
+}
+
+@keyframes neon-pulse {
+  from {
+    filter:
+      drop-shadow(0 0 8px var(--glow-color, #ccff00)) drop-shadow(0 0 20px var(--glow-color, #ccff00)) drop-shadow(0 0 40px var(--glow-color, #ccff00));
+  }
+
+  to {
+    filter:
+      drop-shadow(0 0 12px var(--glow-color, #ccff00)) drop-shadow(0 0 30px var(--glow-color, #ccff00)) drop-shadow(0 0 60px var(--glow-color, #ccff00));
+  }
 }
 
 @keyframes neon-pulse {

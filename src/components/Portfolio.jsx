@@ -55,7 +55,6 @@ export default function Portfolio() {
         { name: "Baby - Eslabon Armado", src: "./music/Baby - Eslabon Armado.opus" },
         { name: "Solo Me Dejaste - Grupo Marca Registrada", src: "./music/Solo Me Dejaste - Grupo Marca Registrada [Audio Oficial].opus" },
         { name: "1004 KM - Junior H", src: "./music/Junior H - 1004 KM (Letra_Lyrics).opus" }
-
     ];
 
     const categories = [
@@ -63,135 +62,28 @@ export default function Portfolio() {
         { title: "Modern Corridos", songs: punkSongs },
     ];
 
-    // Song of the Day data
-    const songs = [
-        "./music/L-O-V-E.opus",
-        "./music/yung kai - blue (official music video).opus",
-        "./music/Way Back Into Love.opus",
-        "./music/I Love You So x Until I Found You.opus",
-        "./music/FLY ME TO THE MOON - OLIVIA ONG (LYRICS).opus",
-        "./music/Can_t Take My Eyes Off You (Craymer & Ruthie Craft).opus",
-        "./music/Mitski - My Love Mine All Mine (Official Lyric Video).opus",
-        "./music/Pink Sweat$ - At My Worst (Lyrics).opus",
-        "./music/Killing Me Softly.opus",
-        "./music/Bill Withers  - Just The Two Of Us (Lyrics).opus",
-        "./music/Chezile - Beanie (Lyrics).opus",
-        "./music/Coyote theory - This Side Of Paradise (Lyrics).opus",
-        "./music/DannyLux - Un Día Entenderás (letra).opus",
-        "./music/Eslabo Armado, Peso Pluma - Ella Baila Sola.opus",
-    ];
-
-    const songNames = [
-        "L-O-V-E - Nat King Cole",
-        "Blue - yung kai",
-        "Way Back Into Love",
-        "I Love You So / Until I Found You",
-        "Fly Me to the Moon - Olivia Ong",
-        "Can't Take My Eyes Off You",
-        "My Love Mine All Mine - Mitski",
-        "At My Worst - Pink Sweat$",
-        "Killing Me Softly",
-        "Just The Two Of Us - Bill Withers",
-        "Beanie - Chezile",
-        "This Side Of Paradise - Coyote Theory",
-        "Un Día Entenderás - DannyLux",
-        "Ella Baila Sola - Eslabon Armado & Peso Pluma",
-    ];
-
-    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-    const sotdIndex = dayOfYear % songs.length;
-
     // ──────────────────────────────────────────────────────────────
-    // PLAY NEXT SONG IN PLAYLIST
-    // ──────────────────────────────────────────────────────────────
-    const playNextInPlaylist = () => {
-        if (!currentSong) return;
-
-        for (const category of categories) {
-            const index = category.songs.findIndex(s => s.src === currentSong.src);
-            if (index !== -1) {
-                const nextIndex = index < category.songs.length - 1 ? index + 1 : 0; // ← loops playlist
-                const nextSong = category.songs[nextIndex];
-
-                const formatted = {
-                    src: nextSong.src,
-                    title: nextSong.name.split(" - ")[0].trim(),
-                    artist: nextSong.name.split(" - ").slice(1).join(" - ").trim() || "Unknown Artist",
-                };
-
-                setCurrentSong(formatted);
-                setIsPlaying(true);
-                setPlayedSongs(prev => new Set(prev).add(nextSong.src));
-                return;
-            }
-        }
-    };
-
-    // ──────────────────────────────────────────────────────────────
-    // SONG OF THE DAY CHAIN
-    // ──────────────────────────────────────────────────────────────
-    const playNextSongOfTheDay = () => {
-        const nextIndex = (sotdIndex + 1) % songs.length;
-        const nextSrc = songs[nextIndex];
-        const nextTitle = songNames[nextIndex].split(" - ")[0];
-        const nextArtist = songNames[nextIndex].split(" - ").slice(1).join(" - ") || "Unknown Artist";
-
-        setCurrentSong({
-            src: nextSrc,
-            title: nextTitle,
-            artist: nextArtist,
-            isSongOfTheDay: true,
-        });
-        setIsPlaying(true);
-        setPlayedSongs(prev => new Set(prev).add(nextSrc));
-    };
-
-    // ──────────────────────────────────────────────────────────────
-    // AUDIO CONTROL (play/pause + autoplay)
+    // AUDIO CONTROL
     // ──────────────────────────────────────────────────────────────
     useEffect(() => {
-        const audio = audioRef.current;
-        if (!audio || !currentSong) return;
-
-        audio.src = currentSong.src;
-
-        if (isPlaying) {
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(err => {
-                    console.warn("Autoplay prevented:", err.message);
-                    setIsPlaying(false);
-                });
-            }
-        } else {
-            audio.pause();
-        }
-
-        const handleEnded = () => {
-            if (currentSong.isSongOfTheDay) {
-                playNextSongOfTheDay();
+        if (audioRef.current && currentSong) {
+            audioRef.current.src = currentSong.src;
+            audioRef.current.load();
+            if (isPlaying) {
+                audioRef.current.play().catch(() => { });
             } else {
-                playNextInPlaylist();
+                audioRef.current.pause();
             }
-        };
-
-        audio.addEventListener("ended", handleEnded);
-        return () => {
-            audio.removeEventListener("ended", handleEnded);
-            audio.pause();
-        };
+        } else if (!currentSong) {
+            audioRef.current?.pause();
+        }
     }, [currentSong, isPlaying]);
 
-    // ──────────────────────────────────────────────────────────────
-    // GLOBAL CONTROLS
-    // ──────────────────────────────────────────────────────────────
-    const handleGlobalPlayPause = () => {
-        setIsPlaying(prev => !prev);
-    };
+    const handleGlobalPlayPause = () => setIsPlaying(prev => !prev);
 
     const handleClosePlayer = () => {
-        setCurrentSong(null);
         setIsPlaying(false);
+        setCurrentSong(null);
     };
 
     const skipEverything = () => {
@@ -215,7 +107,15 @@ export default function Portfolio() {
     // ──────────────────────────────────────────────────────────────
     return (
         <div className="min-h-screen text-white font-sans scroll-smooth relative overflow-hidden">
-            <Particles className="fixed inset-0 -z-10" quantity={30} color="#E0FF4D" />
+            {/* Beautiful particles that change color with every new song */}
+            <Particles
+                className="fixed inset-0 -z-10 neon-glow"
+                quantity={30}
+                color="#E0FF4D"                    // default lime when paused
+                currentSongSrc={currentSong?.src}   // triggers new random color
+                isPlaying={!!currentSong && isPlaying}
+            />
+
             <audio ref={audioRef} preload="auto" />
 
             {/* INTRO */}
@@ -251,13 +151,11 @@ export default function Portfolio() {
                                 <motion.div
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
-                                    transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+                                    transition={{ duration: 0.8, delay: 0.4 }}
                                     className="flex justify-start"
                                 >
                                     <button
                                         onClick={() => setIntroPhase("main")}
-                                        // Optional: Auto-play SOTD on entry
-                                        // onClick={() => { setIntroPhase("main"); /* add SOTD autoplay here if you want */ }}
                                         className="relative p-4 bg-gradient-to-br from-pink-500 via-rose-500 to-purple-600 rounded-full shadow-2xl 
                                            hover:shadow-pink-500/80 animate-pulse border-4 border-white/30 group
                                            hover:scale-110 transition-transform duration-200"
@@ -275,7 +173,7 @@ export default function Portfolio() {
 
             {/* MAIN CONTENT */}
             {introPhase === "main" && (
-                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: "easeOut" }}>
+                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2 }}>
                     <MainContent name={name} />
 
                     <div className="mt-12 flex justify-center px-6">

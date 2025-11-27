@@ -61,7 +61,7 @@ export default function MainContent({ name = "" }) {
                             I’m a Software Engineer specializing in Web Development and Data Analysis.
                             My goal is to be a Machine Learning Engineer someday.
                             <br /><br />I enjoy understanding the things that I am curious about.
-                            {isSpecial && " And lately, that includes you"}
+                            {isSpecial && " And lately, that includes you 😊"}
                         </motion.div>
 
                         {/* CARD 3 */}
