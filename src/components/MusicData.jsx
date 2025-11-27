@@ -3,7 +3,7 @@
 const categories = [
     {
         title: "Indie",
-        description: "I discovered most of these songs by accident, and they quickly became some of my favorites. I like how raw and creative they feel. I keep coming back to these whenever I want to listen to something fresh. The Indie scene defintely has a lot of hidden gems!",
+        description: "I discovered most of these songs by accident, and they quickly became some of my favorites. I like how creative they feel. I keep coming back to these whenever I want to listen to something fresh. The Indie scene defintely has a lot of hidden gems!",
         songs: [
             { src: "./music/corny_af/Arctic Monkeys - No. 1 Party Anthem.opus", title: "No. 1 Party Anthem", artist: "Arctic Monkeys" },
             { src: "./music/corny_af/sombr - back to friends (lyrics).opus", title: "back to friends", artist: "sombr" },
