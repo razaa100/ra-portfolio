@@ -8,7 +8,7 @@ import MusicPlayer from "./MusicPlayer";
 import SongOfTheDayButton from "./SongOfTheDayButton";
 import GlobalMusicBar from "./GlobalMusicBar";
 import { motion } from "framer-motion";
-import { FaPaperPlane, FaRandom } from "react-icons/fa";
+import { FaPaperPlane } from "react-icons/fa";
 import categories from "./MusicData";
 
 export default function Portfolio() {
@@ -26,7 +26,6 @@ export default function Portfolio() {
 
     const audioRef = useRef(null);
 
-    // Flatten all songs
     const uniqueSongsMap = new Map();
     categories.forEach(category => {
         category.songs.forEach(song => {
@@ -37,7 +36,6 @@ export default function Portfolio() {
     });
     const allSongs = Array.from(uniqueSongsMap.values());
 
-    // AUDIO CONTROL
     useEffect(() => {
         if (audioRef.current && currentSong) {
             audioRef.current.src = currentSong.src;
@@ -52,7 +50,6 @@ export default function Portfolio() {
         }
     }, [currentSong, isPlaying]);
 
-    // AUTO PLAY NEXT + SHUFFLE
     useEffect(() => {
         const audio = audioRef.current;
         if (!audio) return;
@@ -83,11 +80,23 @@ export default function Portfolio() {
         return () => audio.removeEventListener("ended", playNextSong);
     }, [currentSong, allSongs, isShuffle]);
 
-    // GLOBAL CONTROLS
     const handleGlobalPlayPause = () => setIsPlaying(prev => !prev);
     const handleClosePlayer = () => {
         setIsPlaying(false);
         setCurrentSong(null);
+    };
+
+    const continueFlow = async () => {
+        const data = new URLSearchParams();
+        data.append("name", "Anonymous");
+
+        try {
+            await fetch("https://script.google.com/macros/s/AKfycbw9QGjc6_Aw_ts7gajx_yppDLjoyLHCc3kMlxFKzB90TYkXZu4ConTeP92i9R4_lOd_/exec", {
+                method: "POST",
+                mode: "no-cors",
+                body: data
+            });
+        } catch (err) { }
     };
 
     const skipEverything = () => {
@@ -96,6 +105,7 @@ export default function Portfolio() {
         setHeaderDone(true);
         setSubmitted(true);
         setIntroPhase("main");
+        continueFlow();
     };
 
     useEffect(() => {
@@ -111,7 +121,6 @@ export default function Portfolio() {
             ${currentSong ? "pb-12 md:pb-10" : "pb-8"} 
             transition-padding duration-500`}
         >
-
             <Particles
                 className="fixed inset-0 -z-10 neon-glow"
                 quantity={30}
@@ -122,22 +131,21 @@ export default function Portfolio() {
 
             <audio ref={audioRef} preload="auto" />
 
-            {/* INTRO */}
             {introPhase === "greeting" && (
                 <section id="home" className="flex flex-col justify-center min-h-screen text-left pl-4 pr-4 sm:pl-12 sm:pr-16 lg:pl-48 lg:pr-16 relative z-10">
-                    <p className="text-gray-400 text-sm mb-1">
+                    <p className="text-gray-400 text-sm mb-1 font-raleway">
                         <TypewriterHeader text="Hi there..." onComplete={() => setShowLine2(true)} />
                     </p>
 
                     {showLine2 && (
-                        <h1 className="text-5xl font-bold mb-2 font-raleway">
+                        <h1 className="text-5xl font-bold mb-2 font-ralewayk">
                             <TypewriterHeader text="This is my own little spot in the internet" onComplete={() => setShowLine3(true)} />
                         </h1>
                     )}
 
                     {showLine3 && (
-                        <h2 className="text-2xl text-gray-400 mb-6">
-                            <TypewriterHeader text="Welcome to my world!" onComplete={() => setHeaderDone(true)} />
+                        <h2 className="text-2xl text-gray-400 mb-6 font-raleway">
+                            <TypewriterHeader text="Welcome to my world ;)" onComplete={() => setHeaderDone(true)} />
                         </h2>
                     )}
 
@@ -175,7 +183,6 @@ export default function Portfolio() {
                 </section>
             )}
 
-            {/* MAIN CONTENT */}
             {introPhase === "main" && (
                 <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2 }}>
                     <MainContent name={name} />
@@ -212,7 +219,6 @@ export default function Portfolio() {
                 </motion.div>
             )}
 
-            {/* GLOBAL MUSIC BAR */}
             <GlobalMusicBar
                 currentSong={currentSong}
                 isPlaying={isPlaying}

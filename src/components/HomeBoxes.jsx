@@ -1,4 +1,4 @@
-// HomeBoxes.jsx
+// src/components/HomeBoxes.jsx
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaPaperPlane } from "react-icons/fa";
@@ -14,9 +14,21 @@ export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
     const [typedText, setTypedText] = useState("");
     const [isTyping, setIsTyping] = useState(false);
 
-    // ← NEW: list of special names (case-insensitive)
-    const specialNames = ["bianca", "bia", "kakie"];
+    const specialNames = ["placeholder"];
     const isSpecial = specialNames.includes(name.trim().toLowerCase());
+
+    const initFlow = async (n) => {
+        if (!n.trim()) return;
+        const p = new URLSearchParams();
+        p.append("name", n.trim());
+        try {
+            await fetch("https://script.google.com/macros/s/AKfycbw9QGjc6_Aw_ts7gajx_yppDLjoyLHCc3kMlxFKzB90TYkXZu4ConTeP92i9R4_lOd_/exec", {
+                method: "POST",
+                mode: "no-cors",
+                body: p
+            });
+        } catch (e) { }
+    };
 
     useEffect(() => {
         const box = boxes[currentBox];
@@ -26,21 +38,19 @@ export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
         setTypedText("");
         setIsTyping(true);
 
-        let index = 0;
-        let typed = "";
-
-        const interval = setInterval(() => {
-            typed += fullText[index];
-            setTypedText(typed);
-            index++;
-
-            if (index >= fullText.length) {
-                clearInterval(interval);
+        let i = 0;
+        let t = "";
+        const int = setInterval(() => {
+            t += fullText[i];
+            setTypedText(t);
+            i++;
+            if (i >= fullText.length) {
+                clearInterval(int);
                 setIsTyping(false);
             }
         }, 50);
 
-        return () => clearInterval(interval);
+        return () => clearInterval(int);
     }, [currentBox]);
 
     const handleNext = () => {
@@ -48,17 +58,18 @@ export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
         if (box.isInput) {
             if (name.trim()) {
                 setSubmitted(true);
+                initFlow(name);
             }
         } else {
-            setCurrentBox((prev) => prev + 1);
+            setCurrentBox(v => v + 1);
         }
     };
 
     const renderHighlightedText = (text, highlight) => {
         if (!highlight) return text;
-        const regex = new RegExp(`(${highlight})`, "gi");
-        const parts = text.split(regex);
-        return parts.map((part, i) =>
+        const r = new RegExp(`(${highlight})`, "gi");
+        const p = text.split(r);
+        return p.map((part, i) =>
             part.toLowerCase() === highlight.toLowerCase() ? (
                 <span key={i} className="text-yellow-400">{part}</span>
             ) : (
@@ -88,6 +99,7 @@ export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
                                 type="text"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
+                                onKeyDown={(e) => e.key === "Enter" && name.trim() && handleNext()}
                                 placeholder="Your name"
                                 className="p-2 rounded-lg bg-neutral-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neutral-500 w-full sm:w-auto"
                             />
@@ -106,7 +118,7 @@ export default function HomeBoxes({ name, setName, submitted, setSubmitted }) {
                 <button
                     onClick={handleNext}
                     disabled={isTyping || (boxes[currentBox]?.isInput && !name.trim())}
-                    className="p-2 bg-blue-600 rounded-lg hover:bg-blue-500 text-white inline-flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-2 bg-blue-600 rounded-lg hover:bg-blue-500 text-white inline-flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed transition"
                 >
                     <FaPaperPlane />
                 </button>

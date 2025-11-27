@@ -1,7 +1,7 @@
 /* src/index.css */
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
-/* optional small global styles */
 :root {
   --bg: #0b0b0c;
   --muted: #9ca3af;
@@ -24,11 +24,17 @@ p {
   font-family: 'Raleway', sans-serif;
 }
 
+/* Font Design for INTRO */
+@layer components {
+  .font-intro-spacegrotesk {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+  }
+}
+
 /* Neon Glow for Particles */
-/* DYNAMIC NEON GLOW — follows particle color perfectly */
 canvas.fixed {
-  /* We inject the current color via inline style from Particles.jsx */
-  /* fallback = lime */
   filter:
     drop-shadow(0 0 8px var(--glow-color, #ccff00)) drop-shadow(0 0 20px var(--glow-color, #ccff00)) drop-shadow(0 0 40px var(--glow-color, #ccff00));
   animation: neon-pulse 5s ease-in-out infinite alternate;
@@ -46,19 +52,6 @@ canvas.fixed {
   }
 }
 
-@keyframes neon-pulse {
-  from {
-    filter:
-      drop-shadow(0 0 6px #ccff00) drop-shadow(0 0 15px #ccff00) drop-shadow(0 0 30px #ccff00);
-  }
-
-  to {
-    filter:
-      drop-shadow(0 0 8px #ccff00) drop-shadow(0 0 20px #ccff00) drop-shadow(0 0 40px #ccff00);
-  }
-}
-
-
 /* Scroll bar - Arrow Removal Fixed */
 .scrollbar-custom::-webkit-scrollbar {
   width: 8px;
@@ -67,8 +60,6 @@ canvas.fixed {
 .scrollbar-custom::-webkit-scrollbar-track {
   background: transparent;
   border-radius: 12px;
-  margin: 0;
-  /* Eliminates space from removed arrows */
 }
 
 .scrollbar-custom::-webkit-scrollbar-thumb {
@@ -79,7 +70,6 @@ canvas.fixed {
   box-shadow: 0 0 16px var(--thumb-glow), inset 0 0 8px var(--thumb-glow);
 }
 
-/* Remove arrows - Fixed for 2025 WebKit */
 .scrollbar-custom::-webkit-scrollbar-button {
   display: none !important;
   height: 0 !important;
